@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.config.Configuration;
 
 public class MobsterPlugin extends JavaPlugin {
 	private Mobster mob;
@@ -49,6 +50,11 @@ public class MobsterPlugin extends JavaPlugin {
     
 	private void loadEvents() {
 		
+	}
+
+	public Configuration getConfig() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	 
 }

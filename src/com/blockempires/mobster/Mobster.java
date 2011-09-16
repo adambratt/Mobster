@@ -1,16 +1,33 @@
 package com.blockempires.mobster;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.util.config.Configuration;
+
 public class Mobster {
-	private MobsterPlugin mobsterPlugin;
-	private List<MobsterDungeon> mobDungeons;
+	private MobsterPlugin plugin;
+	private List<MobsterDungeon> dungeonList;
+	private Configuration config;
 
 	public Mobster(MobsterPlugin mobsterPlugin) {
-		// TODO Auto-generated constructor stub
+		plugin = mobsterPlugin;
+		config = plugin.getConfig();
+		dungeonList = new ArrayList<MobsterDungeon>();
 	}
 
 	public void init() {
+		config.load();
+		setupConfig();
+		setupDungeons();		
+	}
+
+	private void setupConfig() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void setupDungeons() {
 		// TODO Auto-generated method stub
 		
 	}

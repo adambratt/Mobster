@@ -1,5 +1,7 @@
 package com.blockempires.mobster;
 
-public class MobsterDungeon {
+import java.util.List;
 
+public class MobsterDungeon {
+	private List<MobsterRoom> roomList;
 }
