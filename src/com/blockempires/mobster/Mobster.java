@@ -1,6 +1,10 @@
 package com.blockempires.mobster;
 
+import java.util.List;
+
 public class Mobster {
+	private MobsterPlugin mobsterPlugin;
+	private List<MobsterDungeon> mobDungeons;
 
 	public Mobster(MobsterPlugin mobsterPlugin) {
 		// TODO Auto-generated constructor stub
