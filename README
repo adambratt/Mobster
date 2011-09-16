@@ -1,0 +1,9 @@
+=================================
+
+Mobster v0.0 (not yet compilable)
+
+=================================
+
+Plugin Hierarchy:
+The MobsterPlugin is the main class and handles the basic plugin load/enable/disable functions. The Mobster class handles and keeps track of all the dungeons. Each dungeon has a MobsterDungeon class with a MobsterRoom class for each room in the dungeon. Spawners in each room are handled by MobsterSpawner (might be changed).
+
