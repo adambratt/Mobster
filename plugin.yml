@@ -1,0 +1,16 @@
+name: Mobster
+main: com.blockempires.mobster.MobsterPlugin
+version: 0.1
+depend: [WorldGuard, iConomy, PermissionsEx]
+commands:
+    mob:
+        description: Configure the Lineage areas
+        usage: /lineager [area|delmsg|msg|listmsg|setwarp|setprefix|setspawn|linkto]
+    lineage:
+        description: Used to respond to the Lineage Tutorial
+        usage: /lineage [yes|repeat]
+permissions:
+    lineage.hasrace:
+        description: Set once you have chosen your race
+        default: false
+    
