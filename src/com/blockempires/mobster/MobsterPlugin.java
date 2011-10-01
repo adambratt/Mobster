@@ -6,8 +6,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
+import com.blockempires.lineage.LineagePlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 public class MobsterPlugin extends JavaPlugin {
 	private Mobster mob;
+	private static WorldGuardPlugin wgPlugin;
 	public static File dir;
 	
 	public void onEnable(){ 
@@ -55,6 +59,10 @@ public class MobsterPlugin extends JavaPlugin {
 	public Configuration getConfig() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public static WorldGuardPlugin getWorldGuard(){
+		return MobsterPlugin.wgPlugin;
 	}
 	 
 }

@@ -37,9 +37,19 @@ public enum MobsterCreature {
         return type;
     }
     
-    public LivingEntity spawn(MobsterRoom room, Location loc)
+    public String getName(){
+    	return type.getName();
+    }
+    
+    public LivingEntity spawn(Location loc)
     {
         LivingEntity e = loc.getWorld().spawnCreature(loc, type);    
         return e;
+    }
+    
+    public MobsterMonster spawnMonster(Location loc){
+    	LivingEntity e = spawn(loc);
+    	MobsterMonster m = new MobsterMonster(e);
+    	return m;
     }
 }

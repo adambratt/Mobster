@@ -1,5 +1,6 @@
 package com.blockempires.mobster;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 public class MobsterMonster {
@@ -8,6 +9,12 @@ public class MobsterMonster {
 	private LivingEntity entity;
 	private int healthAmount;
 	private MobsterSpawner spawner;
+	
+	public MobsterMonster(LivingEntity e){
+		entity=e;
+		// Default health value
+		healthAmount = 20;
+	}
 
     public LivingEntity getEntity()
     {
@@ -28,6 +35,11 @@ public class MobsterMonster {
     {
         healthAmount -= amount;
     }
+
+	public void kill() {
+		getEntity().remove();	
+		entity = null;
+	}
     
 
 }

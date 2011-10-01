@@ -1,22 +1,16 @@
 package com.blockempires.mobster.commands;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import com.blockempires.mobster.LineageArea;
-import com.blockempires.mobster.LineageAreaMessage;
 import com.blockempires.mobster.Mobster;
 import com.blockempires.mobster.MobsterDungeon;
-import com.blockempires.mobster.MobsterPlugin;
-import com.blockempires.mobster.LineageRace;
 import com.blockempires.mobster.MobsterRoom;
 import com.blockempires.mobster.MobsterSpawner;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class MobsterCommands implements CommandExecutor {
 	private Mobster mob;
@@ -51,7 +45,7 @@ public class MobsterCommands implements CommandExecutor {
 		if (args[0].equalsIgnoreCase("spawn")){
 			
 			if (args.length < 3) return false;
-			
+		
 			// Get spawner to be used in following functions
 			String spawnerName = args[1];
 			MobsterSpawner spawner = mob.getSpawner(spawnerName);
@@ -84,10 +78,12 @@ public class MobsterCommands implements CommandExecutor {
 			if (args[2].equalsIgnoreCase("info")){
 				player.sendMessage(ChatColor.GREEN+"---- '"+spawnerName+"' Spawner Info ----");
 				player.sendMessage(ChatColor.BLUE+"[Speed]"+ChatColor.WHITE+" "+spawner.getSpeed());
-				player.sendMessage(ChatColor.BLUE+"[Time]"+ChatColor.WHITE+" "+spawner.getTime());
-				player.sendMessage(ChatColor.BLUE+"[Type]"+ChatColor.WHITE+" "+spawner.getTypeName());
-				player.sendMessage(ChatColor.BLUE+"[Size]"+ChatColor.WHITE+" "+spawner.getSize());
+				player.sendMessage(ChatColor.BLUE+"[Health]"+ChatColor.WHITE+" "+spawner.getHealth());
+				player.sendMessage(ChatColor.BLUE+"[Creature]"+ChatColor.WHITE+" "+spawner.getCreatureName());
+				player.sendMessage(ChatColor.BLUE+"[Mob Size]"+ChatColor.WHITE+" "+spawner.getSize());
+				player.sendMessage(ChatColor.BLUE+"[Monster Limit]"+ChatColor.WHITE+" "+spawner.getLimit());
 				player.sendMessage(ChatColor.BLUE+"[Room]"+ChatColor.WHITE+" "+spawner.getRoom().getName());
+				player.sendMessage(ChatColor.BLUE+"[Dungeon]"+ChatColor.WHITE+" "+spawner.getRoom().getDungeon().getName());
 				return true;
 			}
 			
@@ -108,7 +104,7 @@ public class MobsterCommands implements CommandExecutor {
 				if (spawner.setHealth(health))
 					msgSuccess(player, spawnerName+" mob health changed to "+health);
 				else
-					msgError(player, "Invalid mob size");
+					msgError(player, "Invalid mob health");
 				return true;
 			}
 			
@@ -130,6 +126,15 @@ public class MobsterCommands implements CommandExecutor {
 				return true;
 			}
 			
+			if (args[2].equalsIgnoreCase("limit")){
+				int limit = Integer.parseInt(args[3]);
+				if (spawner.setLimit(limit))
+					msgSuccess(player, spawnerName+" monster limit changed to "+limit);
+				else
+					msgError(player, "Invalid monster limit");
+				return true;
+			}
+			
 			
 		}else if (args[0].equalsIgnoreCase("room")){
 			
@@ -142,7 +147,7 @@ public class MobsterCommands implements CommandExecutor {
 			if (args[2].equalsIgnoreCase("spawnlist")){
 				int i = 1;
 				player.sendMessage(ChatColor.GREEN+"---- Room '"+roomName+"' Spawner List ----");
-				for (MobsterSpawner s : mob.spawnerList()){
+				for (MobsterSpawner s : room.spawnerList()){
 					player.sendMessage(ChatColor.GREEN+"["+i+"]"+ChatColor.WHITE+" "+s.getName());
 					i++;
 				}
@@ -152,19 +157,19 @@ public class MobsterCommands implements CommandExecutor {
 			if (args[2].equalsIgnoreCase("createin") && args.length==4){
 				String dungeonName = args[3];
 				MobsterDungeon dungeon = mob.getDungeon(dungeonName);
+				ProtectedRegion region = mob.getRegion(roomName, player.getWorld());
 				if (dungeon == null)
 					msgError(player, "Dungeon "+dungeonName+" does not exist");
-				if (room != null)
+				else if (room != null)
 					msgError(player, "Room '"+roomName+"' already exists");
+				else if (region == null)
+					msgError(player, "There is no World Guard region named '"+roomName+"' in this world");
 				else{
-					mob.createRoom(roomName, dungeon);
+					mob.createRoom(roomName, region, dungeon);
 					msgSuccess(player,"Room '"+roomName+"' created in dungeon '"+dungeonName+"'");
 				}
 				return true;
 			}
-			
-			
-			
 			
 		}else if (args[0].equalsIgnoreCase("dungeon")){
 			

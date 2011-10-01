@@ -4,33 +4,52 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
 public class MobsterRoom {
-	protected List<MobsterSpawner> spawnerList;
-	protected HashSet<Entity> monsters;
-	protected boolean useWaves;
+	protected HashSet<MobsterSpawner> spawnerList;
 	protected boolean spawnEnabled;
 	protected List<Player> playerList;
+	protected ProtectedRegion wgRegion;
+	private	Mobster mob;
+	private MobsterDungeon dungeon;
 	
-	/* If useWaves is true it will use the MobsterWaves class for spawning
-	 * recurrent waves of monsters else it will create MobsterSpawners for 
-	 * each spawner in the room.
-	 */
-
-	public void removeMonster(Entity e) {
-		monsters.remove(e);		
+	public MobsterRoom(Mobster m, MobsterDungeon d, ProtectedRegion region){
+		this.mob = m;
+		this.dungeon = d;
+		this.wgRegion = region;
+		spawnerList = new HashSet<MobsterSpawner>();
+		spawnEnabled = true;
 	}
 
-	public boolean inRoom(Location location) {
-		// TODO Auto-generated method stub
+	public boolean inRoom(Location loc) {
+		if(wgRegion==null) return false;
+		com.sk89q.worldedit.Vector v = new com.sk89q.worldedit.Vector(loc.getX(), loc.getY(), loc.getZ());
+		if (wgRegion.contains(v)) {
+		     return true;
+		}
 		return false;
 	}
 
-	public void addMonster(Entity e) {
-		// TODO Auto-generated method stub
-		
+	public String getName() {
+		return wgRegion.getId();
+	}
+
+	public MobsterDungeon getDungeon() {
+		return dungeon;
+	}
+
+	public void addSpawner(MobsterSpawner spawner) {
+		spawnerList.add(spawner);
+	}
+
+	public HashSet<MobsterSpawner> spawnerList() {
+		return spawnerList;
+	}
+
+	public void removeSpawner(MobsterSpawner s) {
+		spawnerList.remove(s);		
 	}
 }
