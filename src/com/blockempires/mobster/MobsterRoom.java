@@ -1,15 +1,18 @@
 package com.blockempires.mobster;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class MobsterRoom {
-	protected HashSet<MobsterSpawner> spawnerList;
+	protected Map<MobsterSpawner, Integer> spawnerList;
 	protected boolean spawnEnabled;
 	protected List<Player> playerList;
 	protected ProtectedRegion wgRegion;
@@ -20,9 +23,10 @@ public class MobsterRoom {
 		this.mob = m;
 		this.dungeon = d;
 		this.wgRegion = region;
-		spawnerList = new HashSet<MobsterSpawner>();
+		spawnerList = new HashMap<MobsterSpawner, Integer>();
 		spawnEnabled = true;
 	}
+	
 
 	public boolean inRoom(Location loc) {
 		if(wgRegion==null) return false;
@@ -42,11 +46,12 @@ public class MobsterRoom {
 	}
 
 	public void addSpawner(MobsterSpawner spawner) {
-		spawnerList.add(spawner);
+		int threadid = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(mob.getPlugin(), spawner, 20, 20);
+		spawnerList.put(spawner, threadid);
 	}
 
-	public HashSet<MobsterSpawner> spawnerList() {
-		return spawnerList;
+	public Collection<MobsterSpawner> spawnerList() {
+		return spawnerList.keySet();
 	}
 
 	public void removeSpawner(MobsterSpawner s) {

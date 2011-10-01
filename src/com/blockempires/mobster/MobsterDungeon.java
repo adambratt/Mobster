@@ -1,13 +1,14 @@
 package com.blockempires.mobster;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 public class MobsterDungeon {
-	private HashSet<MobsterRoom> roomList;
-	private Mobster mob;
+	private Set<MobsterRoom> roomList;
+	public Mobster mob;
 	public MobsterListener listener;
 	protected String name;
 	public boolean enabled;
@@ -17,7 +18,8 @@ public class MobsterDungeon {
 		this.mob = mobster;
 		this.name = dungeonName;
 		this.roomList = new HashSet<MobsterRoom>();
-		this.listener = new MobsterListener();
+		this.enabled = true;
+		this.listener = new MobsterListener(this);
 	}
 
 
@@ -63,7 +65,7 @@ public class MobsterDungeon {
 	}
 
 
-	public HashSet<MobsterRoom> roomList() {
+	public Set<MobsterRoom> roomList() {
 		return roomList;
 	}
 

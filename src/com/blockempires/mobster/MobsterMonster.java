@@ -1,14 +1,12 @@
 package com.blockempires.mobster;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 public class MobsterMonster {
 	
-	private MobsterCreature creature;
+	public MobsterCreature creature;
 	private LivingEntity entity;
 	private int healthAmount;
-	private MobsterSpawner spawner;
 	
 	public MobsterMonster(LivingEntity e){
 		entity=e;

@@ -1,6 +1,8 @@
 package com.blockempires.mobster;
 
 import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
@@ -10,7 +12,7 @@ public class MobsterSpawner implements Runnable {
 	private MobsterRoom room;
 	protected int mobSize, monsterLimit, monsterCount, monsterHealth, spawnSpeed, timeLeft;
 	protected MobsterCreature creature;
-	protected HashSet<MobsterMonster> monsters;
+	protected Set<MobsterMonster> monsters;
 	protected Location loc;
 	protected String name;
 
@@ -130,6 +132,12 @@ public class MobsterSpawner implements Runnable {
 		return true;
 	}
 	
+	public boolean setCreature(String type) {
+		MobsterCreature mc = Mobster.getEnumFromString(MobsterCreature.class, type, MobsterCreature.ZOMBIE);
+		creature = mc;
+		return true;
+	}
+	
 	public String getCreatureName() {
 		return creature.getName();
 	}
@@ -164,10 +172,5 @@ public class MobsterSpawner implements Runnable {
 
 	public void setLocation(Location location) {
 		this.loc = location;		
-	}
-
-	public boolean setCreature(String type) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

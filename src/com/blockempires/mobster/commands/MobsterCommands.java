@@ -75,6 +75,11 @@ public class MobsterCommands implements CommandExecutor {
 				return true;
 			}
 			
+			if (args[2].equalsIgnoreCase("tp") || args[2].equalsIgnoreCase("teleport")){
+				player.teleport(spawner.getLocation());
+				return true;
+			}
+			
 			if (args[2].equalsIgnoreCase("info")){
 				player.sendMessage(ChatColor.GREEN+"---- '"+spawnerName+"' Spawner Info ----");
 				player.sendMessage(ChatColor.BLUE+"[Speed]"+ChatColor.WHITE+" "+spawner.getSpeed());

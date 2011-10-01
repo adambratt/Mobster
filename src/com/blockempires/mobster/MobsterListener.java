@@ -1,8 +1,11 @@
 package com.blockempires.mobster;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Slime;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -12,6 +15,20 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
 public class MobsterListener {
 	private MobsterDungeon dungeon;
+	
+	public MobsterListener(MobsterDungeon dungeon){
+		this.dungeon=dungeon;
+	}
+	
+	
+	public void onCreatureSpawn(CreatureSpawnEvent event){
+		if (!dungeon.enabled)
+			return;
+		LivingEntity entity = (LivingEntity) event.getEntity();
+		if(entity instanceof Slime)
+			// Should handle this sometime soon....
+			return;
+	}
 	
 	public void onEntityDeath(EntityDeathEvent event)
 	{

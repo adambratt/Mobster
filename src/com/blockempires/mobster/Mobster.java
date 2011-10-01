@@ -1,6 +1,7 @@
 package com.blockempires.mobster;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,7 +11,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class Mobster {
 	private MobsterPlugin plugin;
-	private HashSet<MobsterDungeon> dungeonList;
+	private Set<MobsterDungeon> dungeonList;
 	private Configuration config;
 
 	public Mobster(MobsterPlugin mobsterPlugin) {
@@ -38,6 +39,10 @@ public class Mobster {
 	public void shutdown() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public MobsterPlugin getPlugin(){
+		return plugin;
 	}
 	
 	public ProtectedRegion getRegion(String regionName, World world){
@@ -89,7 +94,7 @@ public class Mobster {
 		room.addSpawner(spawner);
 	}
 
-	public HashSet<MobsterDungeon> dungeonList() {
+	public Set<MobsterDungeon> dungeonList() {
 		return dungeonList;
 	}
 
@@ -120,5 +125,18 @@ public class Mobster {
 		MobsterRoom r = new MobsterRoom(this, dungeon, region);
 		dungeon.addRoom(r);
 	}
+	
+	public static <T extends Enum<T>> T getEnumFromString(Class<T> c, String string, T def)
+    {
+        if (c != null && string != null)
+        {
+            try
+            {
+                return Enum.valueOf(c, string.trim().toUpperCase());
+            }
+            catch (IllegalArgumentException ex) { }
+        }
+        return def;
+    }
 
 }

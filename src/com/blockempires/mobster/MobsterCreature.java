@@ -50,6 +50,7 @@ public enum MobsterCreature {
     public MobsterMonster spawnMonster(Location loc){
     	LivingEntity e = spawn(loc);
     	MobsterMonster m = new MobsterMonster(e);
+    	m.creature = this;
     	return m;
     }
 }
