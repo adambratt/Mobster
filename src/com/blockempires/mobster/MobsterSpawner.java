@@ -1,7 +1,7 @@
 package com.blockempires.mobster;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -12,18 +12,25 @@ public class MobsterSpawner implements Runnable {
 	private MobsterRoom room;
 	protected int mobSize, monsterLimit, monsterCount, monsterHealth, spawnSpeed, timeLeft;
 	protected MobsterCreature creature;
-	protected Set<MobsterMonster> monsters;
 	protected Location loc;
 	protected String name;
+	protected boolean dirty = false;
+	protected boolean locked = false;
+	public ConcurrentMap<Integer, MobsterMonster> monsters;
 
-	public MobsterSpawner(MobsterRoom mobRoom){
-		room=mobRoom;
+	public MobsterSpawner(MobsterRoom mobRoom, String name){
+		room = mobRoom;
+		this.name = name;
 		reset();
 	}
 
 	// Main loop that will run as long as the room is populated
 	@Override
 	public void run() {
+		// Update the configuration if needed
+		if (dirty)
+			reset();
+		
 		// Removes stray entities
 		clean();
 		
@@ -44,24 +51,30 @@ public class MobsterSpawner implements Runnable {
 	}
 	
 	public void clean(){
-		for (MobsterMonster m : monsters){
+		if (monsters.isEmpty()) 
+			return;
+		
+		for (MobsterMonster m : monsters.values()){
 			// If monster is dead or outside of the room, remove it.
 			if (m.getEntity().isDead() || !room.inRoom(m.getEntity().getLocation())){
 				monsters.remove(m);
 				m.kill();
 				monsterCount--;
 			}
-		}
+		}		
 	}
 	
 	public void reset(){
-		for (MobsterMonster m : monsters){
-			monsters.remove(m);
-			m.kill();
+		if (monsters != null){
+			for (MobsterMonster m : monsters.values()){
+				m.kill();		
+			}
+			monsters.clear();
 		}
-		monsters = new HashSet<MobsterMonster>();
+		monsters = new ConcurrentHashMap<Integer, MobsterMonster>();
 		timeLeft = 0;
 		monsterCount = 0;
+		dirty = false;
 	}
 	
 	// Spawn mob for this room
@@ -70,21 +83,21 @@ public class MobsterSpawner implements Runnable {
 		for (int i=0; i<mobSize; i++){
 			MobsterMonster m = creature.spawnMonster(loc);
 			m.setHealth(monsterHealth);
-			monsters.add(m);
+			monsters.put(m.id(), m);
 			monsterCount++;
 		}
 	}
 	
 	public MobsterMonster getMonster(LivingEntity e){
-		for(MobsterMonster m : monsters){
-			if(m.getEntity() == e)
-				return m;
-		}
-		return null;
+		return monsters.get(e.getEntityId());
 	}
 	
 	public void killMonster(MobsterMonster m){
-		monsters.remove(m);
+		// If it's dirty, just wait until it resets
+		if(dirty) 
+			return;
+		monsters.remove(m.id());
+		m.kill();
 		monsterCount--;
 	}
 	
@@ -97,6 +110,10 @@ public class MobsterSpawner implements Runnable {
 		return name;
 	}
 	
+	private void updateConfig(){
+		dirty = true;
+	}
+	
 	/**************************************
 	 * 
 	 * Spawn Attribute Getters/Setters
@@ -107,7 +124,7 @@ public class MobsterSpawner implements Runnable {
 		if (size > monsterLimit)
 			return false;
 		mobSize = size;
-		reset();
+		updateConfig();
 		return true;
 	}
 	
@@ -119,7 +136,7 @@ public class MobsterSpawner implements Runnable {
 		if (health < 4 || health > 500)
 			return false;
 		monsterHealth = health;
-		reset();
+		updateConfig();
 		return true;
 	}
 
@@ -129,12 +146,15 @@ public class MobsterSpawner implements Runnable {
 
 	public boolean setCreature(MobsterCreature c) {
 		creature = c;
+		updateConfig();
 		return true;
 	}
 	
 	public boolean setCreature(String type) {
-		MobsterCreature mc = Mobster.getEnumFromString(MobsterCreature.class, type, MobsterCreature.ZOMBIE);
+		MobsterCreature mc = Mobster.getEnumFromString(MobsterCreature.class, type);
+		if(mc == null) return false;
 		creature = mc;
+		updateConfig();
 		return true;
 	}
 	
@@ -146,7 +166,7 @@ public class MobsterSpawner implements Runnable {
 		if(speed < 1 || speed > 360)
 			return false;
 		spawnSpeed = speed;
-		reset();
+		updateConfig();
 		return true;
 	}
 	
@@ -162,7 +182,7 @@ public class MobsterSpawner implements Runnable {
 		if (limit < mobSize)
 			return false;
 		monsterLimit = limit;
-		reset();
+		updateConfig();
 		return true;
 	}
 	

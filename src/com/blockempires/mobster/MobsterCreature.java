@@ -11,12 +11,15 @@ public enum MobsterCreature {
     SPIDER(CreatureType.SPIDER),            SPIDERS(CreatureType.SPIDER),
     CREEPER(CreatureType.CREEPER),          CREEPERS(CreatureType.CREEPER),
     WOLF(CreatureType.WOLF),                WOLVES(CreatureType.WOLF),
+    ENDERMAN(CreatureType.ENDERMAN),        ENDERMEN(CreatureType.ENDERMAN),
+    SILVERFISH(CreatureType.SILVERFISH),	SILVER(CreatureType.SILVERFISH),
     
     // Special creatures
     ZOMBIEPIGMAN(CreatureType.PIG_ZOMBIE),  ZOMBIEPIGMEN(CreatureType.PIG_ZOMBIE),
     HUMAN(CreatureType.MONSTER),            HUMANS(CreatureType.MONSTER),
     GIANT(CreatureType.GIANT),              GIANTS(CreatureType.GIANT),
     GHAST(CreatureType.GHAST),              GHASTS(CreatureType.GHAST),
+    CAVESPIDER(CreatureType.CAVE_SPIDER),	CAVESPIDERS(CreatureType.CAVE_SPIDER),
     
     // Passive creatures
     CHICKEN(CreatureType.CHICKEN),          CHICKENS(CreatureType.CHICKEN),

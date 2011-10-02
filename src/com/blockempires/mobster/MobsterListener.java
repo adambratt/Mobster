@@ -69,8 +69,10 @@ public class MobsterListener {
 		if (damagee instanceof Player) // Also needs to check if player is in this arena
 			onPlayerDamage(event, (Player) damagee, damager);
 		// Monster
-        else if (dungeon.hasMonster(damagee))
-            onMonsterDamage(event, damagee, damager);
+        else if (dungeon.hasMonster(damagee)){
+        	onMonsterDamage(event, damagee, damager);
+        }
+		
 	}
 
 	private void onPlayerDamage(EntityDamageEvent event, Player player, Entity damager)
@@ -84,12 +86,15 @@ public class MobsterListener {
 		// Use our virtual "entity"
 		 MobsterMonster m = dungeon.getMonster(monster);
 
+		 MobsterPlugin.info("Preparing to deal "+event.getDamage()+" to creature with "+m.getHealth());
 		 // Take away virtual HP but keep actual full
 		 m.subtractHealth(event.getDamage());
 		 m.getEntity().setHealth(100);
 		 
 		 // Mimic real damage
 		 event.setDamage(1);
+		 
+		 MobsterPlugin.info("You hit a "+m.creature.getName()+" which now has "+m.getHealth()+" HP");
 		 
 		 // If virtual HP is gone, kill it
 		 if (m.getHealth() <= 0)
@@ -101,8 +106,9 @@ public class MobsterListener {
 			 return;
 		 
 		 // Don't let things in our dungeons combust
-		 if (dungeon.hasMonster(event.getEntity()))
+		 if (dungeon.hasMonster(event.getEntity())){
 			 event.setCancelled(true);
+		 }
 	 } 
 	 
 	 public void onEntityTarget(EntityTargetEvent event)

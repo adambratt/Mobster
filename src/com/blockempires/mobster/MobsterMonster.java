@@ -35,8 +35,12 @@ public class MobsterMonster {
     }
 
 	public void kill() {
-		getEntity().remove();	
-		entity = null;
+		if(!entity.isDead())
+			entity.remove();
+	}
+
+	public int id() {
+		return getEntity().getEntityId();
 	}
     
 

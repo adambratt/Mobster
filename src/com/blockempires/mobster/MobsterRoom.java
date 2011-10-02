@@ -46,7 +46,7 @@ public class MobsterRoom {
 	}
 
 	public void addSpawner(MobsterSpawner spawner) {
-		int threadid = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(mob.getPlugin(), spawner, 20, 20);
+		int threadid = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(mob.getPlugin(), spawner, 100, 20);
 		spawnerList.put(spawner, threadid);
 	}
 
@@ -55,6 +55,9 @@ public class MobsterRoom {
 	}
 
 	public void removeSpawner(MobsterSpawner s) {
+		int thread = spawnerList.get(s);
+		Bukkit.getServer().getScheduler().cancelTask(thread);
+		s.reset();
 		spawnerList.remove(s);		
 	}
 }

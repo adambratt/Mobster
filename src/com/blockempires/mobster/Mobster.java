@@ -21,7 +21,7 @@ public class Mobster {
 	}
 
 	public void init() {
-		config.load();
+		//config.load();
 		setupConfig();
 		setupDungeons();		
 	}
@@ -80,12 +80,12 @@ public class Mobster {
 
 	public void createSpawner(String spawnerName, Location location, MobsterRoom room) {
 		// Create spawner
-		MobsterSpawner spawner = new MobsterSpawner(room);
+		MobsterSpawner spawner = new MobsterSpawner(room, spawnerName);
 		spawner.setLocation(location);
 		
 		// Set default values
 		spawner.setSpeed(10);
-		spawner.setHealth(10);
+		spawner.setHealth(20);
 		spawner.setLimit(5);
 		spawner.setSize(1);
 		spawner.setCreature(MobsterCreature.ZOMBIE);
@@ -126,7 +126,7 @@ public class Mobster {
 		dungeon.addRoom(r);
 	}
 	
-	public static <T extends Enum<T>> T getEnumFromString(Class<T> c, String string, T def)
+	public static <T extends Enum<T>> T getEnumFromString(Class<T> c, String string)
     {
         if (c != null && string != null)
         {
@@ -136,7 +136,7 @@ public class Mobster {
             }
             catch (IllegalArgumentException ex) { }
         }
-        return def;
+        return null;
     }
 
 }

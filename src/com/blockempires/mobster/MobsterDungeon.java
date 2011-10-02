@@ -39,10 +39,16 @@ public class MobsterDungeon {
 
 
 	public boolean hasMonster(Entity e) {
-		MobsterMonster m = this.getMonster(e);
-		if(m==null) 
-			return false;
-		return true;
+		if (e instanceof LivingEntity){
+			LivingEntity monster = (LivingEntity) e;
+			for (MobsterRoom r : roomList){
+				for (MobsterSpawner s : r.spawnerList()){
+					if(s.monsters.containsKey(monster.getEntityId()))
+						return true; 
+				}
+			}
+		}
+		return false;
 	}
 
 
@@ -52,6 +58,7 @@ public class MobsterDungeon {
 			for (MobsterRoom r : roomList){
 				for (MobsterSpawner s : r.spawnerList()){
 					MobsterMonster m = s.getMonster(monster);
+					MobsterPlugin.info("killing dungeon monster");
 					if (m != null)
 						s.killMonster(m);  
 				}

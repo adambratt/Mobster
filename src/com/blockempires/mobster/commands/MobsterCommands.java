@@ -20,11 +20,11 @@ public class MobsterCommands implements CommandExecutor {
 	}
 
 	public void msgSuccess(Player player, String msg){
-		player.sendMessage(ChatColor.RED+"[Mobster][Error] "+msg);
+		player.sendMessage(ChatColor.GREEN+"[Mobster] "+msg);
 	}
 	
 	public void msgError(Player player, String msg){
-		player.sendMessage(ChatColor.GREEN+"[Mobster] "+msg);
+		player.sendMessage(ChatColor.RED+"[Mobster] "+msg);
 	}
 	
 	@Override
@@ -153,7 +153,7 @@ public class MobsterCommands implements CommandExecutor {
 				int i = 1;
 				player.sendMessage(ChatColor.GREEN+"---- Room '"+roomName+"' Spawner List ----");
 				for (MobsterSpawner s : room.spawnerList()){
-					player.sendMessage(ChatColor.GREEN+"["+i+"]"+ChatColor.WHITE+" "+s.getName());
+					player.sendMessage(ChatColor.YELLOW+"["+i+"]"+ChatColor.WHITE+" "+s.getName());
 					i++;
 				}
 				return true;
@@ -181,8 +181,10 @@ public class MobsterCommands implements CommandExecutor {
 			if (args[1].equalsIgnoreCase("list")){
 				int i = 1;
 				player.sendMessage(ChatColor.GREEN+"---- Mobster Dungeon List ----");
+				if(mob.dungeonList() == null) 
+					return true;
 				for (MobsterDungeon d : mob.dungeonList()){
-					player.sendMessage(ChatColor.GREEN+"["+i+"]"+ChatColor.WHITE+" "+d.getName());
+					player.sendMessage(ChatColor.YELLOW+"["+i+"]"+ChatColor.WHITE+" "+d.getName());
 					i++;
 				}
 				return true;
@@ -208,8 +210,10 @@ public class MobsterCommands implements CommandExecutor {
 			if (args[2].equalsIgnoreCase("roomlist")){
 				int i = 1;
 				player.sendMessage(ChatColor.GREEN+"---- "+dungeonName+" Room List ----");
+				if(dungeon.roomList() == null)
+					return true;
 				for (MobsterRoom r : dungeon.roomList()){
-					player.sendMessage(ChatColor.GREEN+"["+i+"]"+ChatColor.WHITE+" "+r.getName());
+					player.sendMessage(ChatColor.YELLOW+"["+i+"]"+ChatColor.WHITE+" "+r.getName());
 					i++;
 				}
 				return true;
