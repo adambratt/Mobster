@@ -19,8 +19,19 @@ public class MobsterSpawner implements Runnable {
 	public ConcurrentMap<Integer, MobsterMonster> monsters;
 
 	public MobsterSpawner(MobsterRoom mobRoom, String name){
+		// Setup main variables
 		room = mobRoom;
 		this.name = name;
+		
+		// Default values
+		mobSize = 1;
+		monsterLimit = 5;
+		monsterHealth = 20;
+		spawnSpeed = 10;
+		creature = MobsterCreature.ZOMBIE;
+		
+		
+		// Finish setting up
 		reset();
 	}
 
@@ -83,6 +94,8 @@ public class MobsterSpawner implements Runnable {
 		for (int i=0; i<mobSize; i++){
 			MobsterMonster m = creature.spawnMonster(loc);
 			m.setHealth(monsterHealth);
+			if(m.id() == 0 )
+				continue; // protection against bad entities
 			monsters.put(m.id(), m);
 			monsterCount++;
 		}
@@ -124,6 +137,7 @@ public class MobsterSpawner implements Runnable {
 		if (size > monsterLimit)
 			return false;
 		mobSize = size;
+		room.mob.db.query("update mobster_spawners set size='"+size+"' where name='"+name+"'");
 		updateConfig();
 		return true;
 	}
@@ -133,9 +147,10 @@ public class MobsterSpawner implements Runnable {
 	}
 
 	public boolean setHealth(int health) {
-		if (health < 4 || health > 500)
+		if (health < 4 || health > 1000)
 			return false;
 		monsterHealth = health;
+		room.mob.db.query("update mobster_spawners set health='"+health+"' where name='"+name+"'");
 		updateConfig();
 		return true;
 	}
@@ -146,6 +161,7 @@ public class MobsterSpawner implements Runnable {
 
 	public boolean setCreature(MobsterCreature c) {
 		creature = c;
+		room.mob.db.query("update mobster_spawners set creature='"+c.getName()+"' where name='"+name+"'");
 		updateConfig();
 		return true;
 	}
@@ -154,6 +170,7 @@ public class MobsterSpawner implements Runnable {
 		MobsterCreature mc = Mobster.getEnumFromString(MobsterCreature.class, type);
 		if(mc == null) return false;
 		creature = mc;
+		room.mob.db.query("update mobster_spawners set creature='"+type+"' where name='"+name+"'");
 		updateConfig();
 		return true;
 	}
@@ -166,6 +183,7 @@ public class MobsterSpawner implements Runnable {
 		if(speed < 1 || speed > 360)
 			return false;
 		spawnSpeed = speed;
+		room.mob.db.query("update mobster_spawners set speed='"+speed+"' where name='"+name+"'");
 		updateConfig();
 		return true;
 	}
@@ -182,6 +200,7 @@ public class MobsterSpawner implements Runnable {
 		if (limit < mobSize)
 			return false;
 		monsterLimit = limit;
+		room.mob.db.query("update mobster_spawners set limit='"+limit+"' where name='"+name+"'");
 		updateConfig();
 		return true;
 	}

@@ -1,5 +1,7 @@
 package com.blockempires.mobster;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,11 +10,13 @@ import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
 import com.blockempires.mobster.MobsterRoom;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lib.PatPeter.SQLibrary.*;
 
 public class Mobster {
 	private MobsterPlugin plugin;
 	private Set<MobsterDungeon> dungeonList;
 	private Configuration config;
+	public MySQL db;
 
 	public Mobster(MobsterPlugin mobsterPlugin) {
 		plugin = mobsterPlugin;
@@ -21,25 +25,117 @@ public class Mobster {
 	}
 
 	public void init() {
-		//config.load();
-		setupConfig();
-		setupDungeons();		
+		config.load();
+		setupConfig();		
 	}
+	
+	/**************************************
+	 * 
+	 * Mobster Setup
+	 * 
+	 **************************************/
 
 	private void setupConfig() {
-		// TODO Auto-generated method stub
+		// Get MySQL info from config, populate if it doesn't exist
+		String hostname = config.getString("database.host","localhost");
+		String database = config.getString("database.database", "minecraft");
+		String username = config.getString("database.username", "root");
+		String port = config.getString("database.port", "3306");
+		String password = config.getString("database.password");
+		config.save();
 		
-	}
-
-	private void setupDungeons() {
-		// TODO Auto-generated method stub
+		// Load MySQL Connector Object
+		this.db = new MySQL(plugin.getServer().getLogger(), "[Mobster] ", hostname, port, database, username, password);	
 		
+		if (db.checkConnection()){
+			
+			// Setup Tables
+			if (!db.checkTable("mobster_dungeons")){
+				String query = "create table mobster_dungeons('id' integer primary key, 'name' varchar(80) not null)";
+				db.createTable(query);
+			}
+			if (!db.checkTable("mobster_rooms")){
+				String query = "create table mobster_rooms('id' integer primary key, 'name' varchar(80) not null, 'world' varchar(80) not null, 'dungeon' varchar(80) not null)";
+				db.createTable(query);
+			}
+			if (!db.checkTable("mobster_spawners")){
+				String query = "create table mobster_spawners('id' integer primary key, 'name' varchar(80) not null, 'creature' varchar(80) not null, 'room' varchar(80) not null, 'health' integer not null, 'speed' integer not null, 'size' integer not null, 'limit' integer not null, 'x' float not null, 'y' float not null, 'z' float not null)";
+				db.createTable(query);
+			}
+			
+			// Load Dungeons
+			ResultSet dungeonResult = db.query("select * from mobster_dungeons");
+			try {
+				while ( dungeonResult.next() ){
+					MobsterDungeon d = new MobsterDungeon(this, dungeonResult.getString("name"));
+					dungeonList.add(d);
+				}
+			} catch (SQLException e) {
+				MobsterPlugin.error("SQL failed with: "+e.getMessage());
+				return;
+			}
+			
+			// Load Rooms
+			ResultSet roomResult = db.query("SELECT r.*, d.name as dungeon_name FROM mobster_rooms r LEFT JOIN mobster_dungeons d on d.name = r.dungeon WHERE d.name IS NOT NULL");
+			try {
+				while ( roomResult.next() ){
+					World world = plugin.getServer().getWorld(roomResult.getString("world"));
+					if (world == null)
+						continue;
+					ProtectedRegion region = MobsterPlugin.getWorldGuard().getRegionManager(world).getRegion(roomResult.getString("name"));
+					if (region == null)
+						continue;
+					MobsterDungeon dungeon = getDungeon(roomResult.getString("dungeon_name")); 
+					if (dungeon == null)
+						continue;
+					MobsterRoom r = new MobsterRoom(this, dungeon, region, world);
+					dungeon.addRoom(r);
+				}
+			} catch (SQLException e) {
+				MobsterPlugin.error("SQL failed with: "+e.getMessage());
+				return;
+			}
+			
+			// Load Spawners
+			ResultSet spawnResult = db.query("SELECT s.*, r.name as room_name, r.world  FROM mobster_spawners s LEFT JOIN mobster_rooms r ON r.name = s.room WHERE r.name IS NOT NULL");
+			try {
+				while ( spawnResult.next() ){
+					MobsterRoom room = getRoom(spawnResult.getString("room_name"));
+					if (room == null)
+						continue;
+					MobsterSpawner spawner = new MobsterSpawner(room, spawnResult.getString("name"));
+					spawner.setHealth(spawnResult.getInt("health"));
+					spawner.setSpeed(spawnResult.getInt("speed"));
+					spawner.setLimit(spawnResult.getInt("limit"));
+					spawner.setSize(spawnResult.getInt("size"));
+					spawner.setCreature(spawnResult.getString("creature"));
+					Location loc = new Location(room.getWorld(), spawnResult.getDouble("x"), spawnResult.getDouble("y"), spawnResult.getDouble("z"));
+					spawner.setLocation(loc);					
+					room.addSpawner(spawner);
+				}
+			} catch (SQLException e) {
+				MobsterPlugin.error("SQL failed with: "+e.getMessage());
+				return;
+			}
+			
+		} else
+			MobsterPlugin.error("Could not connect to database!");
 	}
 
 	public void shutdown() {
-		// TODO Auto-generated method stub
-		
+		// Cleanup all the rooms
+		for (MobsterDungeon d : dungeonList){
+			for (MobsterRoom r : d.roomList()){
+				r.cleanup();
+			}
+		}
 	}
+	
+	/**************************************
+	 * 
+	 * General Mobster API Functions
+	 * 
+	 **************************************/
 	
 	public MobsterPlugin getPlugin(){
 		return plugin;
@@ -82,16 +178,12 @@ public class Mobster {
 		// Create spawner
 		MobsterSpawner spawner = new MobsterSpawner(room, spawnerName);
 		spawner.setLocation(location);
-		
-		// Set default values
-		spawner.setSpeed(10);
-		spawner.setHealth(20);
-		spawner.setLimit(5);
-		spawner.setSize(1);
 		spawner.setCreature(MobsterCreature.ZOMBIE);
 		
 		// Add to room
 		room.addSpawner(spawner);
+		
+		db.query("insert into mobster_spawners(name,room,x,y,z,speed,limit,size,health,creature) values('"+spawnerName+"','"+room.getName()+"','"+location.getX()+"','"+location.getY()+"','"+location.getZ()+"','"+spawner.getSpeed()+"','"+spawner.getLimit()+"','"+spawner.getSize()+"','"+spawner.getHealth()+"','"+spawner.getCreatureName()+"')");
 	}
 
 	public Set<MobsterDungeon> dungeonList() {
@@ -109,6 +201,7 @@ public class Mobster {
 	public void createDungeon(String dungeonName) {
 		MobsterDungeon d = new MobsterDungeon(this, dungeonName);
 		dungeonList.add(d);
+		db.query("insert into mobster_dungeons(name) values('"+dungeonName+"')");
 	}
 
 	public MobsterRoom getRoom(String roomName) {
@@ -121,9 +214,10 @@ public class Mobster {
 		return null;
 	}
 
-	public void createRoom(String roomName, ProtectedRegion region, MobsterDungeon dungeon) {
-		MobsterRoom r = new MobsterRoom(this, dungeon, region);
+	public void createRoom(String roomName, ProtectedRegion region, MobsterDungeon dungeon, World world) {
+		MobsterRoom r = new MobsterRoom(this, dungeon, region, world);
 		dungeon.addRoom(r);
+		db.query("insert into mobster_rooms(dungeon,world,name) values('"+dungeon.getName()+"', '"+world.getName()+"', '"+roomName+"')");
 	}
 	
 	public static <T extends Enum<T>> T getEnumFromString(Class<T> c, String string)

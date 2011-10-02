@@ -88,8 +88,7 @@ public class MobsterPlugin extends JavaPlugin {
 	}
 
 	public Configuration getConfig() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getConfiguration();
 	}
 
 	public static WorldGuardPlugin getWorldGuard(){

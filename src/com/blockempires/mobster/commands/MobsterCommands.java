@@ -170,7 +170,7 @@ public class MobsterCommands implements CommandExecutor {
 				else if (region == null)
 					msgError(player, "There is no World Guard region named '"+roomName+"' in this world");
 				else{
-					mob.createRoom(roomName, region, dungeon);
+					mob.createRoom(roomName, region, dungeon, player.getWorld());
 					msgSuccess(player,"Room '"+roomName+"' created in dungeon '"+dungeonName+"'");
 				}
 				return true;

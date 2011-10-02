@@ -40,7 +40,9 @@ public class MobsterMonster {
 	}
 
 	public int id() {
-		return getEntity().getEntityId();
+		int id = getEntity().getEntityId();
+		if(id < 1) return 0; // Bad entity type spotted!
+		return id;
 	}
     
 

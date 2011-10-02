@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -16,13 +17,15 @@ public class MobsterRoom {
 	protected boolean spawnEnabled;
 	protected List<Player> playerList;
 	protected ProtectedRegion wgRegion;
-	private	Mobster mob;
+	public Mobster mob;
 	private MobsterDungeon dungeon;
+	private World world;
 	
-	public MobsterRoom(Mobster m, MobsterDungeon d, ProtectedRegion region){
+	public MobsterRoom(Mobster m, MobsterDungeon d, ProtectedRegion region, World w){
 		this.mob = m;
 		this.dungeon = d;
 		this.wgRegion = region;
+		this.world = w;
 		spawnerList = new HashMap<MobsterSpawner, Integer>();
 		spawnEnabled = true;
 	}
@@ -44,6 +47,10 @@ public class MobsterRoom {
 	public MobsterDungeon getDungeon() {
 		return dungeon;
 	}
+	
+	public World getWorld() {
+		return world;
+	}
 
 	public void addSpawner(MobsterSpawner spawner) {
 		int threadid = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(mob.getPlugin(), spawner, 100, 20);
@@ -53,11 +60,23 @@ public class MobsterRoom {
 	public Collection<MobsterSpawner> spawnerList() {
 		return spawnerList.keySet();
 	}
+	
+	public void cleanup(){
+		for (int thread : spawnerList.values()){
+			Bukkit.getServer().getScheduler().cancelTask(thread);
+		}
+		for (MobsterSpawner s : spawnerList.keySet()){
+			s.reset();
+		}
+		spawnerList.clear();
+		spawnerList=null;
+	}
 
 	public void removeSpawner(MobsterSpawner s) {
 		int thread = spawnerList.get(s);
 		Bukkit.getServer().getScheduler().cancelTask(thread);
 		s.reset();
+		mob.db.query("delete from mobster_spawners where name='"+s.name+"'");
 		spawnerList.remove(s);		
 	}
 }
