@@ -41,13 +41,13 @@ public class Mobster {
 		String database = config.getString("database.database", "minecraft");
 		String username = config.getString("database.username", "root");
 		String port = config.getString("database.port", "3306");
-		String password = config.getString("database.password");
+		String password = config.getString("database.password", "password");
 		config.save();
 		
 		// Load MySQL Connector Object
 		this.db = new MySQL(plugin.getServer().getLogger(), "[Mobster] ", hostname, port, database, username, password);	
 		
-		if (db.checkConnection()){
+		if (db.getConnection() != null){
 			
 			// Setup Tables
 			if (!db.checkTable("mobster_dungeons")){
