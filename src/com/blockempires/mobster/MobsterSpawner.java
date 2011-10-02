@@ -212,4 +212,8 @@ public class MobsterSpawner implements Runnable {
 	public void setLocation(Location location) {
 		this.loc = location;		
 	}
+	
+	public int getCount() {
+		return monsterCount;
+	}
 }

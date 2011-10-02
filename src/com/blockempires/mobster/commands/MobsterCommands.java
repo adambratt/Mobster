@@ -86,7 +86,7 @@ public class MobsterCommands implements CommandExecutor {
 				player.sendMessage(ChatColor.BLUE+"[Health]"+ChatColor.WHITE+" "+spawner.getHealth());
 				player.sendMessage(ChatColor.BLUE+"[Creature]"+ChatColor.WHITE+" "+spawner.getCreatureName());
 				player.sendMessage(ChatColor.BLUE+"[Mob Size]"+ChatColor.WHITE+" "+spawner.getSize());
-				player.sendMessage(ChatColor.BLUE+"[Monster Limit]"+ChatColor.WHITE+" "+spawner.getLimit());
+				player.sendMessage(ChatColor.BLUE+"[Monster Count]"+ChatColor.WHITE+" "+spawner.getCount()+"/"+spawner.getLimit());
 				player.sendMessage(ChatColor.BLUE+"[Room]"+ChatColor.WHITE+" "+spawner.getRoom().getName());
 				player.sendMessage(ChatColor.BLUE+"[Dungeon]"+ChatColor.WHITE+" "+spawner.getRoom().getDungeon().getName());
 				return true;
