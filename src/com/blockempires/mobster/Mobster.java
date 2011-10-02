@@ -51,15 +51,15 @@ public class Mobster {
 			
 			// Setup Tables
 			if (!db.checkTable("mobster_dungeons")){
-				String query = "create table mobster_dungeons('id' integer primary key, 'name' varchar(80) not null)";
+				String query = "create table mobster_dungeons(id int not null auto_increment, primary key(id), name varchar(80) not null)";
 				db.createTable(query);
 			}
 			if (!db.checkTable("mobster_rooms")){
-				String query = "create table mobster_rooms('id' integer primary key, 'name' varchar(80) not null, 'world' varchar(80) not null, 'dungeon' varchar(80) not null)";
+				String query = "create table mobster_rooms(id int not null auto_increment, primary key(id), name varchar(80) not null, world varchar(80) not null, dungeon varchar(80) not null)";
 				db.createTable(query);
 			}
 			if (!db.checkTable("mobster_spawners")){
-				String query = "create table mobster_spawners('id' integer primary key, 'name' varchar(80) not null, 'creature' varchar(80) not null, 'room' varchar(80) not null, 'health' integer not null, 'speed' integer not null, 'size' integer not null, 'limit' integer not null, 'x' float not null, 'y' float not null, 'z' float not null)";
+				String query = "create table mobster_spawners(id int not null auto_increment, primary key(id), name varchar(80) not null, creature varchar(80) not null, room varchar(80) not null, health int not null, speed int not null, size int not null, `limit` int not null, x double not null, y double not null, z double not null)";
 				db.createTable(query);
 			}
 			
@@ -118,8 +118,10 @@ public class Mobster {
 				return;
 			}
 			
-		} else
+		} else{
 			MobsterPlugin.error("Could not connect to database!");
+			plugin.getServer().getPluginManager().disablePlugin(plugin);
+		}
 	}
 
 	public void shutdown() {
@@ -183,7 +185,7 @@ public class Mobster {
 		// Add to room
 		room.addSpawner(spawner);
 		
-		db.query("insert into mobster_spawners(name,room,x,y,z,speed,limit,size,health,creature) values('"+spawnerName+"','"+room.getName()+"','"+location.getX()+"','"+location.getY()+"','"+location.getZ()+"','"+spawner.getSpeed()+"','"+spawner.getLimit()+"','"+spawner.getSize()+"','"+spawner.getHealth()+"','"+spawner.getCreatureName()+"')");
+		db.query("insert into mobster_spawners(name,room,x,y,z,speed,`limit`,`size`,health,creature) values('"+spawnerName+"','"+room.getName()+"','"+location.getX()+"','"+location.getY()+"','"+location.getZ()+"','"+spawner.getSpeed()+"','"+spawner.getLimit()+"','"+spawner.getSize()+"','"+spawner.getHealth()+"','"+spawner.getCreatureName()+"')");
 	}
 
 	public Set<MobsterDungeon> dungeonList() {

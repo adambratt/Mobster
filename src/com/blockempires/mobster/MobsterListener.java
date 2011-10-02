@@ -86,15 +86,12 @@ public class MobsterListener {
 		// Use our virtual "entity"
 		 MobsterMonster m = dungeon.getMonster(monster);
 
-		 MobsterPlugin.info("Preparing to deal "+event.getDamage()+" to creature with "+m.getHealth());
 		 // Take away virtual HP but keep actual full
 		 m.subtractHealth(event.getDamage());
 		 m.getEntity().setHealth(100);
 		 
 		 // Mimic real damage
 		 event.setDamage(1);
-		 
-		 MobsterPlugin.info("You hit a "+m.creature.getName()+" which now has "+m.getHealth()+" HP");
 		 
 		 // If virtual HP is gone, kill it
 		 if (m.getHealth() <= 0)

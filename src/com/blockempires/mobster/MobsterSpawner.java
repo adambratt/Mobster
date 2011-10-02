@@ -200,7 +200,7 @@ public class MobsterSpawner implements Runnable {
 		if (limit < mobSize)
 			return false;
 		monsterLimit = limit;
-		room.mob.db.query("update mobster_spawners set limit='"+limit+"' where name='"+name+"'");
+		room.mob.db.query("update mobster_spawners set `limit`='"+limit+"' where name='"+name+"'");
 		updateConfig();
 		return true;
 	}

@@ -58,7 +58,6 @@ public class MobsterDungeon {
 			for (MobsterRoom r : roomList){
 				for (MobsterSpawner s : r.spawnerList()){
 					MobsterMonster m = s.getMonster(monster);
-					MobsterPlugin.info("killing dungeon monster");
 					if (m != null)
 						s.killMonster(m);  
 				}
