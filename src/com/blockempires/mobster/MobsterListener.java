@@ -13,6 +13,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
+import com.herocraftonline.dev.heroes.api.SkillDamageEvent;
+import com.herocraftonline.dev.heroes.api.WeaponDamageEvent;
+
 public class MobsterListener {
 	private MobsterDungeon dungeon;
 	
@@ -25,7 +28,15 @@ public class MobsterListener {
 		if (!dungeon.enabled)
 			return;
 		LivingEntity entity = (LivingEntity) event.getEntity();
-		if(entity instanceof Slime)
+		
+		// Should override WorldGuard region spawn protection
+		if (MobsterPlugin.getWorldGuard() != null && event.isCancelled()){
+			if (dungeon.inDungeon(entity.getLocation())){
+				event.setCancelled(false);
+			}
+		}
+		
+		if (entity instanceof Slime)
 			// Should handle this sometime soon....
 			return;
 	}
@@ -51,8 +62,40 @@ public class MobsterListener {
 		// Will handle player deaths in the future
 	}
 	
-	public void onEntityDamage(EntityDamageEvent event)
-	{
+	public void onWeaponDamage(WeaponDamageEvent event){
+		// Ignore PvP
+		if(event.getEntity() instanceof Player)
+			return;
+		
+		// Make sure we can get monster
+		MobsterMonster m = dungeon.getMonster(event.getEntity());
+		if(m == null)
+			return;
+		
+		dealMonsterDamage(m, event.getDamage());
+		 
+		 // Mimic real damage
+		 event.setDamage(1);
+				
+	}
+	
+	public void onSkillDamage(SkillDamageEvent event){		
+		// Ignore PvP
+		if(event.getEntity() instanceof Player)
+			return;
+		
+		// Make sure we can get monster
+		MobsterMonster m = dungeon.getMonster(event.getEntity());
+		if(m == null)
+			return;
+		
+		dealMonsterDamage(m, event.getDamage());
+		 
+		 // Mimic real damage
+		 event.setDamage(1);
+	}
+	
+	public void onEntityDamage(EntityDamageEvent event){
 		if (!dungeon.enabled) 
 			return;
 		
@@ -75,27 +118,34 @@ public class MobsterListener {
 		
 	}
 
-	private void onPlayerDamage(EntityDamageEvent event, Player player, Entity damager)
-	{
+	private void onPlayerDamage(EntityDamageEvent event, Player player, Entity damager){
         // Will handle player damage in the future
     }
 	
 	// Called when a monster in this dungeon is damaged
-	 private void onMonsterDamage(EntityDamageEvent event, Entity monster, Entity damager)
-	 {
-		// Use our virtual "entity"
-		 MobsterMonster m = dungeon.getMonster(monster);
+	 private void onMonsterDamage(EntityDamageEvent event, Entity monster, Entity damager){
+		 // If using heroes, we will let it do the work
+		 if(MobsterPlugin.heroesPlugin != null && damager instanceof Player){
+			 return;
+		 }
 
-		 // Take away virtual HP but keep actual full
-		 m.subtractHealth(event.getDamage());
-		 m.getEntity().setHealth(100);
+		 MobsterMonster m = dungeon.getMonster(monster);	 
+		 dealMonsterDamage(m, event.getDamage());
 		 
 		 // Mimic real damage
 		 event.setDamage(1);
+	 }
+	 
+	 private void dealMonsterDamage(MobsterMonster monster, int damage){
+		// Take away virtual HP but keep actual full
+		 monster.subtractHealth(damage);
+		 monster.getEntity().setHealth(100);
 		 
 		 // If virtual HP is gone, kill it
-		 if (m.getHealth() <= 0)
-			 dungeon.killMonster(monster);		 
+		 if (monster.getHealth() <= 0) {
+			 //NEED TO FIX THIS, it's looping through when we already have the mobster monster object
+			 dungeon.killMonster(monster.getEntity());
+		 }
 	 }
 	 
 	 public void onEntityCombust(EntityCombustEvent event){
@@ -104,7 +154,9 @@ public class MobsterListener {
 		 
 		 // Don't let things in our dungeons combust
 		 if (dungeon.hasMonster(event.getEntity())){
-			 event.setCancelled(true);
+			 if (MobsterPlugin.heroesPlugin == null){
+				 event.setCancelled(true);
+			 }
 		 }
 	 } 
 	 

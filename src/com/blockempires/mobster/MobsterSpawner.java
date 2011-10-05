@@ -15,7 +15,7 @@ public class MobsterSpawner implements Runnable {
 	protected Location loc;
 	protected String name;
 	protected boolean dirty = false;
-	protected boolean locked = false;
+	protected boolean loaded = false;
 	public ConcurrentMap<Integer, MobsterMonster> monsters;
 
 	public MobsterSpawner(MobsterRoom mobRoom, String name){
@@ -26,12 +26,33 @@ public class MobsterSpawner implements Runnable {
 		// Default values
 		mobSize = 1;
 		monsterLimit = 5;
-		monsterHealth = 20;
 		spawnSpeed = 10;
 		creature = MobsterCreature.ZOMBIE;
+		monsterHealth = 10;
 		
+		// For default health check for Heroes default
+		if (MobsterPlugin.heroesPlugin != null){
+			int x = MobsterPlugin.heroesPlugin.getDamageManager().getCreatureHealth(MobsterCreature.ZOMBIE.getType());
+			if ( x > 0 ) 
+				monsterHealth = x;
+		}
+			
 		
 		// Finish setting up
+		reset();
+	}
+	
+	public MobsterSpawner(MobsterRoom mobRoom, String name, int size, int limit, int speed, int health, MobsterCreature mobcreature, Location l){
+		room = mobRoom;
+		this.name = name;
+		mobSize = size;
+		monsterLimit = limit;
+		spawnSpeed = speed;
+		monsterHealth = health;
+		creature = mobcreature;
+		loc = l;
+		
+		// Initialize
 		reset();
 	}
 
@@ -44,6 +65,17 @@ public class MobsterSpawner implements Runnable {
 		
 		// Removes stray entities
 		clean();
+		
+		// Check to see if chunk is loaded
+		if (!loc.getBlock().getChunk().isLoaded()){
+			loaded = false;
+			return;
+		} else if (loaded == false){
+			loaded = true;
+			reset();
+			return;
+		}
+			
 		
 		// Check to see if spawn enabled (eventually check for people)
 		if (!room.spawnEnabled)
@@ -66,10 +98,10 @@ public class MobsterSpawner implements Runnable {
 			return;
 		
 		for (MobsterMonster m : monsters.values()){
-			// If monster is dead or outside of the room, remove it.
-			if (m.getEntity().isDead() || !room.inRoom(m.getEntity().getLocation())){
-				monsters.remove(m);
-				m.kill();
+			// If monster is dead or outside of the room/loaded chunk, remove it.
+			if (m.getEntity().isDead() || m.getHealth() <= 0 || !room.inRoom(m.getEntity().getLocation()) || !m.getEntity().getLocation().getBlock().getChunk().isLoaded()){
+				monsters.remove(m.id());
+				m.remove();
 				monsterCount--;
 			}
 		}		
@@ -78,7 +110,7 @@ public class MobsterSpawner implements Runnable {
 	public void reset(){
 		if (monsters != null){
 			for (MobsterMonster m : monsters.values()){
-				m.kill();		
+				m.remove();		
 			}
 			monsters.clear();
 		}
@@ -94,7 +126,7 @@ public class MobsterSpawner implements Runnable {
 		for (int i=0; i<mobSize; i++){
 			MobsterMonster m = creature.spawnMonster(loc);
 			m.setHealth(monsterHealth);
-			if(m.id() == 0 )
+			if(m.id() == 0 || m.getEntity() == null)
 				continue; // protection against bad entities
 			monsters.put(m.id(), m);
 			monsterCount++;
@@ -106,12 +138,7 @@ public class MobsterSpawner implements Runnable {
 	}
 	
 	public void killMonster(MobsterMonster m){
-		// If it's dirty, just wait until it resets
-		if(dirty) 
-			return;
-		monsters.remove(m.id());
 		m.kill();
-		monsterCount--;
 	}
 	
 	
@@ -157,6 +184,10 @@ public class MobsterSpawner implements Runnable {
 
 	public int getHealth() {
 		return monsterHealth;
+	}
+	
+	public int getTime() {
+		return timeLeft;
 	}
 
 	public boolean setCreature(MobsterCreature c) {

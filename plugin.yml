@@ -2,6 +2,7 @@ name: Mobster
 main: com.blockempires.mobster.MobsterPlugin
 version: 0.2
 depend: [WorldGuard]
+softdepend: [Heroes]
 commands:
     mobster:
         description: Configure Mobster

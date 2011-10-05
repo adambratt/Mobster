@@ -11,7 +11,7 @@ public class MobsterMonster {
 	public MobsterMonster(LivingEntity e){
 		entity=e;
 		// Default health value
-		healthAmount = 20;
+		healthAmount = 10;
 	}
 
     public LivingEntity getEntity()
@@ -35,13 +35,16 @@ public class MobsterMonster {
     }
 
 	public void kill() {
-		if(!entity.isDead())
-			entity.remove();
+		entity.damage(10000);
+	}
+	
+	public void remove() {
+		entity.remove();
+		entity=null;
 	}
 
 	public int id() {
 		int id = getEntity().getEntityId();
-		if(id < 1) return 0; // Bad entity type spotted!
 		return id;
 	}
     

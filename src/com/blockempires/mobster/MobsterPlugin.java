@@ -12,11 +12,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 
 import com.blockempires.mobster.commands.MobsterCommands;
+import com.herocraftonline.dev.heroes.Heroes;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class MobsterPlugin extends JavaPlugin {
 	private Mobster mob;
 	private static WorldGuardPlugin wgPlugin;
+	public static Heroes heroesPlugin;
 	private PluginManager pManage;
 	public static File dir;
 	
@@ -57,12 +59,21 @@ public class MobsterPlugin extends JavaPlugin {
     
     //Loads dependencies
     private void loadDepend(){
+    	// World Guard
     	if (pManage.isPluginEnabled("WorldGuard")){
-			Plugin wg=pManage.getPlugin("WorldGuard");
+			Plugin wg = pManage.getPlugin("WorldGuard");
 			if (wg instanceof WorldGuardPlugin)
-				wgPlugin=(WorldGuardPlugin) wg;
+				wgPlugin = (WorldGuardPlugin) wg;
 		} else
 			error("WorldGuard does not appear to be installed and is REQUIRED by Mobster");
+    	
+    	// Heroes
+    	if (pManage.isPluginEnabled("Heroes")){
+    		Plugin h = pManage.getPlugin("Heroes");
+    		if(h instanceof Heroes)
+    			heroesPlugin = (Heroes) h;
+    	}else
+    		info("Heroes plugin not found");
     }
     
     private void loadConfig(){
@@ -85,6 +96,11 @@ public class MobsterPlugin extends JavaPlugin {
 		pManage.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);
 		pManage.registerEvent(Event.Type.ENTITY_COMBUST, entityListener, Priority.Normal, this);
 		pManage.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Low, this);
+		
+		if (heroesPlugin != null){
+			HeroesListener heroesListener = new HeroesListener(this.mob);
+			pManage.registerEvent(Event.Type.CUSTOM_EVENT, heroesListener, Priority.Monitor, this);
+		}
 	}
 
 	public Configuration getConfig() {

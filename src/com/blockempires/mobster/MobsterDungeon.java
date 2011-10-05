@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.Location;
 
 public class MobsterDungeon {
 	private Set<MobsterRoom> roomList;
@@ -20,6 +21,15 @@ public class MobsterDungeon {
 		this.roomList = new HashSet<MobsterRoom>();
 		this.enabled = true;
 		this.listener = new MobsterListener(this);
+	}
+	
+	
+	public boolean inDungeon(Location loc){
+		for (MobsterRoom r : roomList){
+			if(r.inRoom(loc))
+				return true;
+		}
+		return false;
 	}
 
 

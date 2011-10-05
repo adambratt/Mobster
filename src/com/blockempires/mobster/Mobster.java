@@ -103,14 +103,8 @@ public class Mobster {
 					MobsterRoom room = getRoom(spawnResult.getString("room_name"));
 					if (room == null)
 						continue;
-					MobsterSpawner spawner = new MobsterSpawner(room, spawnResult.getString("name"));
-					spawner.setHealth(spawnResult.getInt("health"));
-					spawner.setSpeed(spawnResult.getInt("speed"));
-					spawner.setLimit(spawnResult.getInt("limit"));
-					spawner.setSize(spawnResult.getInt("size"));
-					spawner.setCreature(spawnResult.getString("creature"));
 					Location loc = new Location(room.getWorld(), spawnResult.getDouble("x"), spawnResult.getDouble("y"), spawnResult.getDouble("z"));
-					spawner.setLocation(loc);					
+					MobsterSpawner spawner = new MobsterSpawner(room, spawnResult.getString("name"), spawnResult.getInt("size"), spawnResult.getInt("limit"), spawnResult.getInt("speed"), spawnResult.getInt("health"), Mobster.getEnumFromString(MobsterCreature.class, spawnResult.getString("creature")), loc);				
 					room.addSpawner(spawner);
 				}
 			} catch (SQLException e) {

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.blockempires.mobster.Mobster;
 import com.blockempires.mobster.MobsterDungeon;
+import com.blockempires.mobster.MobsterMonster;
 import com.blockempires.mobster.MobsterRoom;
 import com.blockempires.mobster.MobsterSpawner;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -87,8 +88,21 @@ public class MobsterCommands implements CommandExecutor {
 				player.sendMessage(ChatColor.BLUE+"[Creature]"+ChatColor.WHITE+" "+spawner.getCreatureName());
 				player.sendMessage(ChatColor.BLUE+"[Mob Size]"+ChatColor.WHITE+" "+spawner.getSize());
 				player.sendMessage(ChatColor.BLUE+"[Monster Count]"+ChatColor.WHITE+" "+spawner.getCount()+"/"+spawner.getLimit());
+				player.sendMessage(ChatColor.BLUE+"[Time Left]"+ChatColor.WHITE+" "+spawner.getTime()+"s");
 				player.sendMessage(ChatColor.BLUE+"[Room]"+ChatColor.WHITE+" "+spawner.getRoom().getName());
 				player.sendMessage(ChatColor.BLUE+"[Dungeon]"+ChatColor.WHITE+" "+spawner.getRoom().getDungeon().getName());
+				return true;
+			}
+			
+			if (args[2].equalsIgnoreCase("stats")){
+				player.sendMessage(ChatColor.GREEN+"---- '"+spawnerName+"' Spawner Monster Stats ----");
+				if (spawner.monsters == null)
+					return true;
+				int i=1;
+				for (MobsterMonster m : spawner.monsters.values()){
+					player.sendMessage(ChatColor.AQUA+""+i+". "+ChatColor.WHITE+""+m.getHealth()+"/"+spawner.getHealth()+"HP, id: "+m.id()+", type: "+m.creature.getName());
+					i++;
+				}
 				return true;
 			}
 			
