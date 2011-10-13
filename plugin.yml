@@ -1,6 +1,6 @@
 name: Mobster
 main: com.blockempires.mobster.MobsterPlugin
-version: 0.2
+version: 0.3
 depend: [WorldGuard]
 softdepend: [Heroes]
 commands:

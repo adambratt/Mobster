@@ -1,11 +1,10 @@
 package com.blockempires.mobster;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -13,7 +12,7 @@ import org.bukkit.entity.Player;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class MobsterRoom {
-	protected Map<MobsterSpawner, Integer> spawnerList;
+	protected Set<MobsterSpawner> spawnerList;
 	protected boolean spawnEnabled;
 	protected List<Player> playerList;
 	protected ProtectedRegion wgRegion;
@@ -26,7 +25,7 @@ public class MobsterRoom {
 		this.dungeon = d;
 		this.wgRegion = region;
 		this.world = w;
-		spawnerList = new HashMap<MobsterSpawner, Integer>();
+		spawnerList = new HashSet<MobsterSpawner>();
 		spawnEnabled = true;
 	}
 	
@@ -53,19 +52,15 @@ public class MobsterRoom {
 	}
 
 	public void addSpawner(MobsterSpawner spawner) {
-		int threadid = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(mob.getPlugin(), spawner, 100, 20);
-		spawnerList.put(spawner, threadid);
+		spawnerList.add(spawner);
 	}
 
 	public Collection<MobsterSpawner> spawnerList() {
-		return spawnerList.keySet();
+		return spawnerList;
 	}
 	
 	public void cleanup(){
-		for (int thread : spawnerList.values()){
-			Bukkit.getServer().getScheduler().cancelTask(thread);
-		}
-		for (MobsterSpawner s : spawnerList.keySet()){
+		for (MobsterSpawner s : spawnerList){
 			s.reset();
 		}
 		spawnerList.clear();
@@ -73,10 +68,22 @@ public class MobsterRoom {
 	}
 
 	public void removeSpawner(MobsterSpawner s) {
-		int thread = spawnerList.get(s);
-		Bukkit.getServer().getScheduler().cancelTask(thread);
 		s.reset();
 		mob.db.query("delete from mobster_spawners where name='"+s.name+"'");
 		spawnerList.remove(s);		
+	}
+
+
+	public void run() {
+		for (MobsterSpawner spawn : spawnerList){
+			spawn.run();
+		}
+	}
+
+
+	public void reset() {
+		for (MobsterSpawner spawn : spawnerList){
+			spawn.reset();
+		}
 	}
 }

@@ -23,7 +23,6 @@ public class MobsterListener {
 		this.dungeon=dungeon;
 	}
 	
-	
 	public void onCreatureSpawn(CreatureSpawnEvent event){
 		if (!dungeon.enabled)
 			return;

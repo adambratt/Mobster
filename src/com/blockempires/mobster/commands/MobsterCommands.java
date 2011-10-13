@@ -40,7 +40,15 @@ public class MobsterCommands implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		
-		// We don't have any commands that are just one thing
+		// Handles resetting the dungeons
+		if (args[0].equalsIgnoreCase("reset")){	
+			msgSuccess(player, "Old Mobster Thread: "+mob.thread);
+			mob.reset();
+			msgSuccess(player, "New Mobster Thread: "+mob.thread);
+			return true;
+		}
+		
+		// We don't have any other commands that are just one thing
 		if(args.length < 2) return false;
 		
 		if (args[0].equalsIgnoreCase("spawn")){

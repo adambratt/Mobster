@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
@@ -12,11 +13,12 @@ import com.blockempires.mobster.MobsterRoom;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lib.PatPeter.SQLibrary.*;
 
-public class Mobster {
+public class Mobster implements Runnable {
 	private MobsterPlugin plugin;
 	private Set<MobsterDungeon> dungeonList;
 	private Configuration config;
 	public MySQL db;
+	public int thread;
 
 	public Mobster(MobsterPlugin mobsterPlugin) {
 		plugin = mobsterPlugin;
@@ -26,7 +28,8 @@ public class Mobster {
 
 	public void init() {
 		config.load();
-		setupConfig();		
+		setupConfig();	
+		setupDungeons();
 	}
 	
 	/**************************************
@@ -116,6 +119,35 @@ public class Mobster {
 			MobsterPlugin.error("Could not connect to database!");
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
 		}
+	}
+	
+	private void setupDungeons(){
+		MobsterPlugin.info("Initializing spawners in dungeons...");
+		if(thread > 0){ 
+			Bukkit.getServer().getScheduler().cancelTask(thread);
+			for (MobsterDungeon d : dungeonList){
+				for (MobsterRoom r : d.roomList()){
+					if(r.spawnEnabled){
+						r.reset();
+					}
+				}
+			}
+		}
+		thread = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 100, 20);
+	}
+	
+	public void run(){
+		for (MobsterDungeon d : dungeonList){
+			for (MobsterRoom r : d.roomList()){
+				if(r.spawnEnabled){
+					r.run();
+				}
+			}
+		}
+	}
+	
+	public void reset(){
+		setupDungeons();
 	}
 
 	public void shutdown() {
@@ -228,5 +260,4 @@ public class Mobster {
         }
         return null;
     }
-
 }

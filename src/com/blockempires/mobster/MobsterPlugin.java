@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityListener;
+import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -90,13 +91,18 @@ public class MobsterPlugin extends JavaPlugin {
     
 	private void loadEvents() {
 		EntityListener entityListener = new MobsterEntityListener(this.mob);
+		ServerListener pluginListener = new MobsterPluginListener(this);
 		pManage.registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Priority.Highest, this);
 		pManage.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Low, this);
 		pManage.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Lowest, this);
 		pManage.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);
 		pManage.registerEvent(Event.Type.ENTITY_COMBUST, entityListener, Priority.Normal, this);
 		pManage.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Low, this);
-		
+		pManage.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
+		loadHeroesEvents();
+	}
+	
+	public void loadHeroesEvents(){
 		if (heroesPlugin != null){
 			HeroesListener heroesListener = new HeroesListener(this.mob);
 			pManage.registerEvent(Event.Type.CUSTOM_EVENT, heroesListener, Priority.Monitor, this);
