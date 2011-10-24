@@ -12,6 +12,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 
 import com.herocraftonline.dev.heroes.api.SkillDamageEvent;
 import com.herocraftonline.dev.heroes.api.WeaponDamageEvent;
@@ -178,5 +180,25 @@ public class MobsterListener {
                 // Cancel this event if the closest player is not in the room
             	 return;
 		 }
-	 }	
+	 }
+
+	public void onChunkLoad(ChunkLoadEvent event) {
+		for (MobsterRoom room : dungeon.roomList()){
+			for (MobsterSpawner spawn : room.spawnerList()){
+				if(spawn.getLocation().getBlock().getChunk() == event.getChunk()){
+					spawn.reset();
+				}
+			}
+		}
+	}
+
+	public void onChunkUnLoad(ChunkUnloadEvent event) {
+		for (MobsterRoom room : dungeon.roomList()){
+			for (MobsterSpawner spawn : room.spawnerList()){
+				if(spawn.getLocation().getBlock().getChunk() == event.getChunk()){
+					spawn.reset();
+				}
+			}
+		}
+	}	
 }

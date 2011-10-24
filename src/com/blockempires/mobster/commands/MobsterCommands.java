@@ -1,9 +1,13 @@
 package com.blockempires.mobster.commands;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.blockempires.mobster.Mobster;
@@ -51,7 +55,27 @@ public class MobsterCommands implements CommandExecutor {
 		// We don't have any other commands that are just one thing
 		if(args.length < 2) return false;
 		
-		if (args[0].equalsIgnoreCase("spawn")){
+		if (args[0].equalsIgnoreCase("lookup")){
+			if (args[1] != null){
+				int entityid = Integer.parseInt(args[1]);
+				List<Entity> monsters = player.getWorld().getEntities();
+				for (Entity m : monsters){
+					if (m.getEntityId() == entityid){
+						msgSuccess(player, "-------Entity ID:  "+entityid+" -------");
+						msgSuccess(player, "Is it dead:  "+m.isDead());
+						Location loc = m.getLocation();
+						msgSuccess(player, "X:"+loc.getX());
+						msgSuccess(player, "Y:"+loc.getY());
+						msgSuccess(player, "Z:"+loc.getZ());
+						return true;
+					}
+				}
+				msgError(player, "Could not find entity: "+entityid);
+				return true;
+			}
+			return false;
+			
+		}else if (args[0].equalsIgnoreCase("spawn")){
 			
 			if (args.length < 3) return false;
 		
@@ -97,18 +121,19 @@ public class MobsterCommands implements CommandExecutor {
 				player.sendMessage(ChatColor.BLUE+"[Mob Size]"+ChatColor.WHITE+" "+spawner.getSize());
 				player.sendMessage(ChatColor.BLUE+"[Monster Count]"+ChatColor.WHITE+" "+spawner.getCount()+"/"+spawner.getLimit());
 				player.sendMessage(ChatColor.BLUE+"[Time Left]"+ChatColor.WHITE+" "+spawner.getTime()+"s");
+				player.sendMessage(ChatColor.BLUE+"[Chunk Info]"+ChatColor.WHITE+" loaded:"+spawner.getLocation().getBlock().getChunk().isLoaded());
 				player.sendMessage(ChatColor.BLUE+"[Room]"+ChatColor.WHITE+" "+spawner.getRoom().getName());
 				player.sendMessage(ChatColor.BLUE+"[Dungeon]"+ChatColor.WHITE+" "+spawner.getRoom().getDungeon().getName());
 				return true;
 			}
 			
-			if (args[2].equalsIgnoreCase("stats")){
-				player.sendMessage(ChatColor.GREEN+"---- '"+spawnerName+"' Spawner Monster Stats ----");
+			if (args[2].equalsIgnoreCase("debug")){
+				player.sendMessage(ChatColor.GREEN+"---- '"+spawnerName+"' Spawner Monster DEBUG ----");
 				if (spawner.monsters == null)
 					return true;
 				int i=1;
 				for (MobsterMonster m : spawner.monsters.values()){
-					player.sendMessage(ChatColor.AQUA+""+i+". "+ChatColor.WHITE+""+m.getHealth()+"/"+spawner.getHealth()+"HP, id: "+m.id()+", type: "+m.creature.getName());
+					player.sendMessage(ChatColor.AQUA+""+i+". "+ChatColor.WHITE+""+m.getHealth()+"/"+spawner.getHealth()+"HP, id: "+m.id()+", type: "+m.creature.getName()+", dead: "+m.getEntity().isDead()+", world:"+m.getEntity().getWorld().getName()+", x:"+m.getEntity().getLocation().getBlockX()+", y:"+m.getEntity().getLocation().getBlockY()+", z:"+m.getEntity().getLocation().getBlockZ()+", cload:"+m.getEntity().getLocation().getBlock().getChunk().isLoaded());
 					i++;
 				}
 				return true;
