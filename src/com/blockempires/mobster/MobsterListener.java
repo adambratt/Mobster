@@ -1,5 +1,6 @@
 package com.blockempires.mobster;
 
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -140,7 +141,19 @@ public class MobsterListener {
 	 private void dealMonsterDamage(MobsterMonster monster, int damage){
 		// Take away virtual HP but keep actual full
 		 monster.subtractHealth(damage);
-		 monster.getEntity().setHealth(16);
+		 
+		 switch(monster.creature.getType()){
+		 	case MUSHROOM_COW:
+		 		monster.getEntity().setHealth(10);
+		 		break;
+		 	case SLIME:
+		 		monster.getEntity().setHealth(1);
+		 		break;
+		 	default:
+		 		monster.getEntity().setHealth(16);
+		 		break;
+		 }
+		 
 		 
 		 // If virtual HP is gone, kill it
 		 if (monster.getHealth() <= 0) {

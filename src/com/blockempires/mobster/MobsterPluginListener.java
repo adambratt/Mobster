@@ -16,11 +16,14 @@ public class MobsterPluginListener extends ServerListener {
 	@Override
 	public void onPluginEnable(PluginEnableEvent event) {
 		Plugin eventp = event.getPlugin();
-		if(eventp instanceof Heroes){
-			MobsterPlugin.heroesPlugin = (Heroes) eventp;
-			plugin.loadHeroesEvents();
-			MobsterPlugin.info("Heroes has been loaded late. It is now enabled for Mobster!");
-		}
-		
+		try {
+			if(eventp instanceof Heroes){ 
+				MobsterPlugin.heroesPlugin = (Heroes) eventp;
+				plugin.loadHeroesEvents();
+				MobsterPlugin.info("Heroes has been loaded late. It is now enabled for Mobster!");
+			}
+		 } catch (NoClassDefFoundError ex) {
+			 return;
+		 }
 	}
 }
