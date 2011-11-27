@@ -149,6 +149,8 @@ public class MobsterListener {
 		 	case SLIME:
 		 		monster.getEntity().setHealth(1);
 		 		break;
+		 	case CAVE_SPIDER:
+		 		monster.getEntity().setHealth(12);
 		 	default:
 		 		monster.getEntity().setHealth(16);
 		 		break;
