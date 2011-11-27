@@ -140,7 +140,7 @@ public class MobsterListener {
 	 private void dealMonsterDamage(MobsterMonster monster, int damage){
 		// Take away virtual HP but keep actual full
 		 monster.subtractHealth(damage);
-		 monster.getEntity().setHealth(100);
+		 monster.getEntity().setHealth(16);
 		 
 		 // If virtual HP is gone, kill it
 		 if (monster.getHealth() <= 0) {

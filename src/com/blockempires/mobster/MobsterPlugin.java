@@ -3,6 +3,7 @@ package com.blockempires.mobster;
 import java.io.File;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.event.world.WorldListener;
@@ -113,9 +114,6 @@ public class MobsterPlugin extends JavaPlugin {
 		}
 	}
 
-	public Configuration getConfig() {
-		return this.getConfiguration();
-	}
 
 	public static WorldGuardPlugin getWorldGuard(){
 		return MobsterPlugin.wgPlugin;

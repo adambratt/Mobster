@@ -20,13 +20,19 @@ public enum MobsterCreature {
     GIANT(CreatureType.GIANT),              GIANTS(CreatureType.GIANT),
     GHAST(CreatureType.GHAST),              GHASTS(CreatureType.GHAST),
     CAVESPIDER(CreatureType.CAVE_SPIDER),	CAVESPIDERS(CreatureType.CAVE_SPIDER),
+    BLAZE(CreatureType.BLAZE),              BLAZES(CreatureType.BLAZE),
+    ENDERDRAGON(CreatureType.ENDER_DRAGON),
+    SLIME(CreatureType.SLIME),
     
     // Passive creatures
     CHICKEN(CreatureType.CHICKEN),          CHICKENS(CreatureType.CHICKEN),
     COW(CreatureType.COW),                  COWS(CreatureType.COW),
     PIG(CreatureType.PIG),                  PIGS(CreatureType.PIG),
     SHEEP(CreatureType.SHEEP),
+    MUSHROOMCOW(CreatureType.MUSHROOM_COW),
+    VILLAGER(CreatureType.VILLAGER),
     SQUID(CreatureType.SQUID),              SQUIDS(CreatureType.SQUID);
+    
     
     private CreatureType type;
     

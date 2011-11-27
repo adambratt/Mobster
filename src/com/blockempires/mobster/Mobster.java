@@ -8,7 +8,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import com.blockempires.mobster.MobsterRoom;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lib.PatPeter.SQLibrary.*;
@@ -16,7 +16,7 @@ import lib.PatPeter.SQLibrary.*;
 public class Mobster implements Runnable {
 	private MobsterPlugin plugin;
 	private Set<MobsterDungeon> dungeonList;
-	private Configuration config;
+	private FileConfiguration config;
 	public MySQL db;
 	public int thread;
 
@@ -27,7 +27,6 @@ public class Mobster implements Runnable {
 	}
 
 	public void init() {
-		config.load();
 		setupConfig();	
 		setupDungeons();
 	}
@@ -45,7 +44,7 @@ public class Mobster implements Runnable {
 		String username = config.getString("database.username", "root");
 		String port = config.getString("database.port", "3306");
 		String password = config.getString("database.password", "password");
-		config.save();
+		//config.save();
 		
 		// Load MySQL Connector Object
 		this.db = new MySQL(plugin.getServer().getLogger(), "[Mobster] ", hostname, port, database, username, password);	
