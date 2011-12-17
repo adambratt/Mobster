@@ -23,6 +23,8 @@ public enum MobsterCreature {
     BLAZE(CreatureType.BLAZE),              BLAZES(CreatureType.BLAZE),
     ENDERDRAGON(CreatureType.ENDER_DRAGON),
     SLIME(CreatureType.SLIME),
+    SNOWMAN(CreatureType.SNOWMAN),          SNOWGOLEM(CreatureType.SNOWMAN),
+    MAGMACUBE(CreatureType.MAGMA_CUBE),     
     
     // Passive creatures
     CHICKEN(CreatureType.CHICKEN),          CHICKENS(CreatureType.CHICKEN),
