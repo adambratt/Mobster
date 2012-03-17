@@ -5,13 +5,14 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+import lib.PatPeter.SQLibrary.MySQL;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
-import com.blockempires.mobster.MobsterRoom;
+
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import lib.PatPeter.SQLibrary.*;
 
 public class Mobster implements Runnable {
 	private MobsterPlugin plugin;
@@ -40,10 +41,10 @@ public class Mobster implements Runnable {
 	private void setupConfig() {
 		// Get MySQL info from config, populate if it doesn't exist
 		String hostname = config.getString("database.host","localhost");
-		String database = config.getString("database.database", "minecraft");
+		String database = config.getString("database.database", "BEWarn");
 		String username = config.getString("database.username", "root");
-		String port = config.getString("database.port", "3306");
-		String password = config.getString("database.password", "password");
+		String port = config.getString("database.port", "8889");
+		String password = config.getString("database.password", "root");
 		//config.save();
 		
 		// Load MySQL Connector Object

@@ -1,11 +1,12 @@
 package com.blockempires.mobster;
 
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -16,15 +17,21 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import com.herocraftonline.dev.heroes.api.SkillDamageEvent;
-import com.herocraftonline.dev.heroes.api.WeaponDamageEvent;
+import com.herocraftonline.heroes.api.events.SkillDamageEvent;
+import com.herocraftonline.heroes.api.events.WeaponDamageEvent;
 
-public class MobsterListener {
+public class MobsterListener implements Listener {
 	private MobsterDungeon dungeon;
 	
-	public MobsterListener(MobsterDungeon dungeon){
-		this.dungeon=dungeon;
+	public MobsterListener(){
+		
 	}
+	
+	
+	public void getDung(MobsterDungeon d) {
+		this.dungeon = d;
+	}
+	
 	
 	public void onCreatureSpawn(CreatureSpawnEvent event){
 		if (!dungeon.enabled)
@@ -43,6 +50,7 @@ public class MobsterListener {
 			return;
 	}
 	
+	
 	public void onEntityDeath(EntityDeathEvent event)
 	{
 		if (event.getEntity() instanceof Player){
@@ -54,6 +62,7 @@ public class MobsterListener {
 		}
 	}
 	
+	
 	private void onMonsterDeath(EntityDeathEvent event, MobsterMonster m)
 	{
 		dungeon.killMonster(event.getEntity());
@@ -64,6 +73,7 @@ public class MobsterListener {
 		// Will handle player deaths in the future
 	}
 	
+	
 	public void onWeaponDamage(WeaponDamageEvent event){
 		// Ignore PvP
 		if(event.getEntity() instanceof Player)
@@ -73,6 +83,8 @@ public class MobsterListener {
 		MobsterMonster m = dungeon.getMonster(event.getEntity());
 		if(m == null)
 			return;
+		
+		//MobsterPlugin.error("Dealing heroes damage of "+event.getDamage());
 		
 		dealMonsterDamage(m, event.getDamage());
 		 
@@ -97,6 +109,7 @@ public class MobsterListener {
 		 event.setDamage(1);
 	}
 	
+	
 	public void onEntityDamage(EntityDamageEvent event){
 		if (!dungeon.enabled) 
 			return;
@@ -120,6 +133,7 @@ public class MobsterListener {
 		
 	}
 
+	
 	private void onPlayerDamage(EntityDamageEvent event, Player player, Entity damager){
         // Will handle player damage in the future
     }
@@ -139,28 +153,51 @@ public class MobsterListener {
 	 }
 	 
 	 private void dealMonsterDamage(MobsterMonster monster, int damage){
+		 
+		 //MobsterPlugin.error("mobster hp:"+monster.getHealth()+" doing damage of: "+damage);
+		 
 		// Take away virtual HP but keep actual full
 		 monster.subtractHealth(damage);
 		 
-		 switch(monster.creature.getType()){
+		 
+		 //MobsterPlugin.error("normal hp (before):"+monster.getEntity().getHealth());
+		 
+		 /*switch(monster.creature.getType()){
 		 	case MUSHROOM_COW:
 		 		monster.getEntity().setHealth(10);
 		 		break;
 		 	case SLIME:
 		 		monster.getEntity().setHealth(1);
 		 		break;
-		 	default:
+		 	case CAVE_SPIDER:
+		 		monster.getEntity().setHealth(12);
+		 		break;
+		 	case SKELETON:
+		 	case ZOMBIE:
+		 		monster.getEntity().setHealth(20);
+		 		break;
+		 	case SPIDER:
 		 		monster.getEntity().setHealth(16);
 		 		break;
-		 }
+		 	default:
+		 		monster.getEntity().setHealth(4);
+		 		break;
+		 }*/
+		 
+		 monster.getEntity().setHealth(monster.getEntity().getMaxHealth());
+		 
+		 //MobsterPlugin.error("mobster did damage hp is now:"+monster.getHealth());
+		 //MobsterPlugin.error("normal hp (after):"+monster.getEntity().getHealth()+" is alive?"+monster.getEntity().isDead());
 		 
 		 
 		 // If virtual HP is gone, kill it
 		 if (monster.getHealth() <= 0) {
+			 //MobsterPlugin.error("killing monster with mobster");
 			 //NEED TO FIX THIS, it's looping through when we already have the mobster monster object
 			 dungeon.killMonster(monster.getEntity());
 		 }
 	 }
+	 
 	 
 	 public void onEntityCombust(EntityCombustEvent event){
 		 if (!dungeon.enabled) 
@@ -173,6 +210,7 @@ public class MobsterListener {
 			 }
 		 }
 	 } 
+	 
 	 
 	 public void onEntityTarget(EntityTargetEvent event)
 	 {
@@ -194,8 +232,9 @@ public class MobsterListener {
             	 return;
 		 }
 	 }
-
-	public void onChunkLoad(ChunkLoadEvent event) {
+	 
+	 
+	 public void onChunkLoad(ChunkLoadEvent event) {
 		for (MobsterRoom room : dungeon.roomList()){
 			for (MobsterSpawner spawn : room.spawnerList()){
 				if(spawn.getLocation().getBlock().getChunk() == event.getChunk()){
@@ -203,9 +242,10 @@ public class MobsterListener {
 				}
 			}
 		}
-	}
+	 }
 
-	public void onChunkUnLoad(ChunkUnloadEvent event) {
+	 
+	 public void onChunkUnLoad(ChunkUnloadEvent event) {
 		for (MobsterRoom room : dungeon.roomList()){
 			for (MobsterSpawner spawn : room.spawnerList()){
 				if(spawn.getLocation().getBlock().getChunk() == event.getChunk()){
@@ -213,5 +253,5 @@ public class MobsterListener {
 				}
 			}
 		}
-	}	
+	 }	
 }

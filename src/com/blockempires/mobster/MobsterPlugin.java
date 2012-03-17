@@ -3,19 +3,12 @@ package com.blockempires.mobster;
 import java.io.File;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.entity.EntityListener;
-import org.bukkit.event.server.ServerListener;
-import org.bukkit.event.world.WorldListener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 
 import com.blockempires.mobster.commands.MobsterCommands;
-import com.herocraftonline.dev.heroes.Heroes;
+import com.herocraftonline.heroes.Heroes;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class MobsterPlugin extends JavaPlugin {
@@ -23,13 +16,18 @@ public class MobsterPlugin extends JavaPlugin {
 	private static WorldGuardPlugin wgPlugin;
 	public static Heroes heroesPlugin;
 	private PluginManager pManage;
+
+	
 	public static File dir;
 	
 	public void onEnable(){ 
 		//Get Folder setup
 		dir=getDataFolder();
 		if(!dir.exists()) dir.mkdir();
-		
+		getServer().getPluginManager().registerEvents(new MobsterPluginListener(this), this);
+		getServer().getPluginManager().registerEvents(new MobsterWorldListener(this.mob), this);
+		getServer().getPluginManager().registerEvents(new MobsterEntityListener(this.mob), this);
+
 		//Get Configuration
 		loadConfig();		
 		
@@ -42,7 +40,7 @@ public class MobsterPlugin extends JavaPlugin {
 		
 		//Setup Events & Commands
 		loadCommands();
-		loadEvents();	
+		loadEvents();
 		
 		//Tell the console
 		info("Mobster v"+getDescription().getVersion()+" has been enabled.");
@@ -92,25 +90,15 @@ public class MobsterPlugin extends JavaPlugin {
     }
     
 	private void loadEvents() {
-		EntityListener entityListener = new MobsterEntityListener(this.mob);
-		ServerListener pluginListener = new MobsterPluginListener(this);
-		WorldListener worldListener = new MobsterWorldListener(this.mob);
-		pManage.registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Priority.Highest, this);
-		pManage.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Low, this);
-		pManage.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Lowest, this);
-		pManage.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);
-		pManage.registerEvent(Event.Type.ENTITY_COMBUST, entityListener, Priority.Normal, this);
-		pManage.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Low, this);
-		pManage.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
-		pManage.registerEvent(Event.Type.CHUNK_LOAD, worldListener, Priority.Monitor, this);
-		pManage.registerEvent(Event.Type.CHUNK_UNLOAD, worldListener, Priority.Monitor, this);
+		//new MobsterEntityListener(this.mob);
+		//new MobsterPluginListener(this);
+		//new MobsterWorldListener(this.mob);
 		loadHeroesEvents();
 	}
 	
 	public void loadHeroesEvents(){
 		if (heroesPlugin != null){
-			HeroesListener heroesListener = new HeroesListener(this.mob);
-			pManage.registerEvent(Event.Type.CUSTOM_EVENT, heroesListener, Priority.Monitor, this);
+			getServer().getPluginManager().registerEvents(new HeroesListener(this.mob), this);
 		}
 	}
 

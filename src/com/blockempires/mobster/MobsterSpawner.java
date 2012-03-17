@@ -8,7 +8,7 @@ import org.bukkit.entity.LivingEntity;
 
 
 public class MobsterSpawner implements Runnable {
-	
+
 	private MobsterRoom room;
 	protected int mobSize, monsterLimit, monsterCount, monsterHealth, spawnSpeed, timeLeft;
 	protected MobsterCreature creature;
@@ -22,26 +22,26 @@ public class MobsterSpawner implements Runnable {
 		// Setup main variables
 		room = mobRoom;
 		this.name = name;
-		
+
 		// Default values
 		mobSize = 1;
 		monsterLimit = 5;
 		spawnSpeed = 10;
+		
 		creature = MobsterCreature.ZOMBIE;
 		monsterHealth = 10;
-		
+
 		// For default health check for Heroes default
 		if (MobsterPlugin.heroesPlugin != null){
-			int x = MobsterPlugin.heroesPlugin.getDamageManager().getCreatureHealth(MobsterCreature.ZOMBIE.getType());
-			if ( x > 0 ) 
-				monsterHealth = x;
-		}
 			
-		
+			
+		}
+
+
 		// Finish setting up
 		reset();
 	}
-	
+
 	public MobsterSpawner(MobsterRoom mobRoom, String name, int size, int limit, int speed, int health, MobsterCreature mobcreature, Location l){
 		room = mobRoom;
 		this.name = name;
@@ -51,7 +51,7 @@ public class MobsterSpawner implements Runnable {
 		monsterHealth = health;
 		creature = mobcreature;
 		loc = l;
-		
+
 		// Initialize
 		reset();
 	}
@@ -62,10 +62,10 @@ public class MobsterSpawner implements Runnable {
 		// Update the configuration if needed
 		if (dirty)
 			reset();
-		
+
 		// Removes stray entities
 		clean();
-		
+
 		// Check to see if chunk is loaded
 		if (!loc.getBlock().getChunk().isLoaded()){
 			loaded = false;
@@ -75,16 +75,16 @@ public class MobsterSpawner implements Runnable {
 			reset();
 			return;
 		}
-			
-		
+
+
 		// Check to see if spawn enabled (eventually check for people)
 		if (!room.spawnEnabled)
 			return;
-		
+
 		// Check to see if we have reached our spawn limit
 		if (monsterCount > (monsterLimit - mobSize))
 			return;
-		
+
 		// If no time on the clock, spawn. If time, lets count down!
 		if(timeLeft <= 0){
 			runSpawn();		
@@ -92,11 +92,11 @@ public class MobsterSpawner implements Runnable {
 		} else
 			timeLeft--;
 	}
-	
+
 	public void clean(){
 		if (monsters.isEmpty()) 
 			return;
-		
+
 		for (MobsterMonster m : monsters.values()){
 			// If monster is dead or outside of the room/loaded chunk, remove it.
 			if (m.getEntity().isDead() || m.getHealth() <= 0 || !room.inRoom(m.getEntity().getLocation()) || !m.getEntity().getLocation().getBlock().getChunk().isLoaded()){
@@ -106,7 +106,7 @@ public class MobsterSpawner implements Runnable {
 			}
 		}		
 	}
-	
+
 	public void reset(){
 		if (monsters != null){
 			for (MobsterMonster m : monsters.values()){
@@ -119,41 +119,41 @@ public class MobsterSpawner implements Runnable {
 		monsterCount = 0;
 		dirty = false;
 	}
-	
+
 	// Spawn mob for this room
 	protected void runSpawn()
 	{
 		for (int i=0; i<mobSize; i++){
 			MobsterMonster m = creature.spawnMonster(loc);
-			m.setHealth(monsterHealth);
+			m.setHealth(m.getEntity().getMaxHealth());
 			if(m.id() == 0 || m.getEntity() == null)
 				continue; // protection against bad entities
 			monsters.put(m.id(), m);
 			monsterCount++;
 		}
 	}
-	
+
 	public MobsterMonster getMonster(LivingEntity e){
 		return monsters.get(e.getEntityId());
 	}
-	
+
 	public void killMonster(MobsterMonster m){
 		m.kill();
 	}
-	
-	
+
+
 	public MobsterRoom getRoom(){
 		return room;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	private void updateConfig(){
 		dirty = true;
 	}
-	
+
 	/**************************************
 	 * 
 	 * Spawn Attribute Getters/Setters
@@ -168,7 +168,7 @@ public class MobsterSpawner implements Runnable {
 		updateConfig();
 		return true;
 	}
-	
+
 	public int getSize() {
 		return mobSize;
 	}
@@ -185,7 +185,7 @@ public class MobsterSpawner implements Runnable {
 	public int getHealth() {
 		return monsterHealth;
 	}
-	
+
 	public int getTime() {
 		return timeLeft;
 	}
@@ -196,7 +196,7 @@ public class MobsterSpawner implements Runnable {
 		updateConfig();
 		return true;
 	}
-	
+
 	public boolean setCreature(String type) {
 		MobsterCreature mc = Mobster.getEnumFromString(MobsterCreature.class, type);
 		if(mc == null) return false;
@@ -205,7 +205,7 @@ public class MobsterSpawner implements Runnable {
 		updateConfig();
 		return true;
 	}
-	
+
 	public String getCreatureName() {
 		return creature.getName();
 	}
@@ -218,7 +218,7 @@ public class MobsterSpawner implements Runnable {
 		updateConfig();
 		return true;
 	}
-	
+
 	public int getSpeed() {
 		return spawnSpeed;
 	}	
@@ -235,7 +235,7 @@ public class MobsterSpawner implements Runnable {
 		updateConfig();
 		return true;
 	}
-	
+
 	public Location getLocation(){
 		return loc;
 	}
@@ -243,8 +243,9 @@ public class MobsterSpawner implements Runnable {
 	public void setLocation(Location location) {
 		this.loc = location;		
 	}
-	
+
 	public int getCount() {
 		return monsterCount;
 	}
 }
+

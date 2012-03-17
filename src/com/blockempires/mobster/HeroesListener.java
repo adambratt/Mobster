@@ -1,23 +1,28 @@
 package com.blockempires.mobster;
 
-import com.herocraftonline.dev.heroes.api.HeroesEventListener;
-import com.herocraftonline.dev.heroes.api.SkillDamageEvent;
-import com.herocraftonline.dev.heroes.api.WeaponDamageEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
-public class HeroesListener extends HeroesEventListener {
+import com.herocraftonline.heroes.api.events.SkillDamageEvent;
+import com.herocraftonline.heroes.api.events.WeaponDamageEvent;
+
+public class HeroesListener implements Listener {
 	private Mobster mob;
 	
 	public HeroesListener(Mobster mob) {
 		this.mob=mob;
+
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onSkillDamage(SkillDamageEvent event) {
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onSkillDamage(event);
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onWeaponDamage(WeaponDamageEvent event) {
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onWeaponDamage(event);

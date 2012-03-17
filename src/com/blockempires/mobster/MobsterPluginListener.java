@@ -1,19 +1,22 @@
 package com.blockempires.mobster;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-import com.herocraftonline.dev.heroes.Heroes;
+import com.herocraftonline.heroes.Heroes;
 
-public class MobsterPluginListener extends ServerListener {
+public class MobsterPluginListener implements Listener {
 	private MobsterPlugin plugin;
 
 	public MobsterPluginListener(MobsterPlugin mobsterPlugin) {
 		this.plugin=mobsterPlugin;
 	}
 
-	@Override
+	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPluginEnable(PluginEnableEvent event) {
 		Plugin eventp = event.getPlugin();
 		try {

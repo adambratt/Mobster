@@ -1,23 +1,26 @@
 package com.blockempires.mobster;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldListener;
 
-public class MobsterWorldListener extends WorldListener {
+public class MobsterWorldListener implements Listener {
 	private Mobster mob;
 
 	public MobsterWorldListener(Mobster mob) {
 		this.mob=mob;
 	}
 
-	@Override
+	@EventHandler(priority=EventPriority.MONITOR)
 	public void onChunkLoad(ChunkLoadEvent event) {
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onChunkLoad(event);
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChunkUnload(ChunkUnloadEvent event) {
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onChunkUnLoad(event);

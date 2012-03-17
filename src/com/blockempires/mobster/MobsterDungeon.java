@@ -3,9 +3,9 @@ package com.blockempires.mobster;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.Location;
 
 public class MobsterDungeon {
 	private Set<MobsterRoom> roomList;
@@ -20,7 +20,8 @@ public class MobsterDungeon {
 		this.name = dungeonName;
 		this.roomList = new HashSet<MobsterRoom>();
 		this.enabled = true;
-		this.listener = new MobsterListener(this);
+		this.listener = new MobsterListener();
+		listener.getDung(this);
 	}
 	
 	
