@@ -43,6 +43,9 @@ public class MobsterCommands implements CommandExecutor {
 			return false;
 		}
 		Player player = (Player) sender;
+		
+		if (args.length < 1)
+			return false;
 
 		// Handles resetting the dungeons
 		if (args[0].equalsIgnoreCase("reset")){	
