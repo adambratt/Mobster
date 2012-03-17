@@ -19,6 +19,8 @@ public class MobsterEntityListener implements Listener{
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event){
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onCreatureSpawn(event);
 	}
@@ -30,24 +32,32 @@ public class MobsterEntityListener implements Listener{
 	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityDeath(EntityDeathEvent event){
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onEntityDeath(event);
 	}
 	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onEntityDamage(EntityDamageEvent event){
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onEntityDamage(event);
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityCombust(EntityCombustEvent event){
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onEntityCombust(event);
 	}
 	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onEntityTarget(EntityTargetEvent event){
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onEntityTarget(event);
 	}

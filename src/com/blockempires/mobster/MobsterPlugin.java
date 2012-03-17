@@ -24,9 +24,6 @@ public class MobsterPlugin extends JavaPlugin {
 		//Get Folder setup
 		dir=getDataFolder();
 		if(!dir.exists()) dir.mkdir();
-		getServer().getPluginManager().registerEvents(new MobsterPluginListener(this), this);
-		getServer().getPluginManager().registerEvents(new MobsterWorldListener(this.mob), this);
-		getServer().getPluginManager().registerEvents(new MobsterEntityListener(this.mob), this);
 
 		//Get Configuration
 		loadConfig();		
@@ -90,9 +87,9 @@ public class MobsterPlugin extends JavaPlugin {
     }
     
 	private void loadEvents() {
-		//new MobsterEntityListener(this.mob);
-		//new MobsterPluginListener(this);
-		//new MobsterWorldListener(this.mob);
+		getServer().getPluginManager().registerEvents(new MobsterPluginListener(this), this);
+		getServer().getPluginManager().registerEvents(new MobsterWorldListener(this.mob), this);
+		getServer().getPluginManager().registerEvents(new MobsterEntityListener(this.mob), this);
 		loadHeroesEvents();
 	}
 	

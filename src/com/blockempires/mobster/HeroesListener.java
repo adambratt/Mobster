@@ -17,12 +17,16 @@ public class HeroesListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onSkillDamage(SkillDamageEvent event) {
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onSkillDamage(event);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onWeaponDamage(WeaponDamageEvent event) {
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onWeaponDamage(event);
 	}

@@ -15,12 +15,16 @@ public class MobsterWorldListener implements Listener {
 
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onChunkLoad(ChunkLoadEvent event) {
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onChunkLoad(event);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onChunkUnload(ChunkUnloadEvent event) {
+		if (mob.dungeonList() == null)
+			return;
 		for(MobsterDungeon d : mob.dungeonList())
 			d.listener.onChunkUnLoad(event);
 	}
