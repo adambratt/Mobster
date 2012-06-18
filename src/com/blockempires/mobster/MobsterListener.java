@@ -111,7 +111,7 @@ public class MobsterListener implements Listener {
 	
 	
 	public void onEntityDamage(EntityDamageEvent event){
-		if (!dungeon.enabled) 
+		if (!dungeon.enabled || event.isCancelled()) 
 			return;
 		
 		EntityDamageByEntityEvent e = (event instanceof EntityDamageByEntityEvent) ? (EntityDamageByEntityEvent) event : null;
@@ -127,8 +127,8 @@ public class MobsterListener implements Listener {
 		if (damagee instanceof Player) // Also needs to check if player is in this arena
 			onPlayerDamage(event, (Player) damagee, damager);
 		// Monster
-        else if (dungeon.hasMonster(damagee)){
-        	onMonsterDamage(event, damagee, damager);
+        else if (damagee instanceof LivingEntity && dungeon.hasMonster(damagee)){
+        	onMonsterDamage(event, (LivingEntity) damagee, damager);
         }
 		
 	}
@@ -139,7 +139,14 @@ public class MobsterListener implements Listener {
     }
 	
 	// Called when a monster in this dungeon is damaged
-	 private void onMonsterDamage(EntityDamageEvent event, Entity monster, Entity damager){
+	 private void onMonsterDamage(EntityDamageEvent event, LivingEntity monster, Entity damager){
+		 
+		 // If no-damage isn't ticking...
+		 if(monster.getNoDamageTicks() > 10){
+			event.setCancelled(true);
+			return;
+		 }
+		 
 		 // If using heroes, we will let it do the work
 		 if(MobsterPlugin.heroesPlugin != null && damager instanceof Player){
 			 return;
