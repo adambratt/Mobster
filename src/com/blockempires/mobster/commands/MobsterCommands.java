@@ -78,7 +78,7 @@ public class MobsterCommands implements CommandExecutor {
 			}
 			return false;
 
-		}else if (args[0].equalsIgnoreCase("spawn")){
+		}else if (args[0].equalsIgnoreCase("spawn") || args[0].equalsIgnoreCase("s")){
 
 			if (args.length < 3) return false;
 
@@ -191,7 +191,7 @@ public class MobsterCommands implements CommandExecutor {
 			}
 
 
-		}else if (args[0].equalsIgnoreCase("room")){
+		}else if (args[0].equalsIgnoreCase("room") || args[0].equalsIgnoreCase("r")){
 
 			if (args.length < 3) return false;
 
@@ -226,7 +226,7 @@ public class MobsterCommands implements CommandExecutor {
 				return true;
 			}
 
-		}else if (args[0].equalsIgnoreCase("dungeon")){
+		}else if (args[0].equalsIgnoreCase("dungeon") || args[0].equalsIgnoreCase("d")){
 
 			if (args[1].equalsIgnoreCase("list")){
 				int i = 1;

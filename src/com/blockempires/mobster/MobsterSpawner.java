@@ -29,7 +29,7 @@ public class MobsterSpawner implements Runnable {
 		spawnSpeed = 10;
 		
 		creature = MobsterCreature.ZOMBIE;
-		monsterHealth = 10;
+		monsterHealth = 20;
 
 		// For default health check for Heroes default
 		if (MobsterPlugin.heroesPlugin != null){
@@ -125,7 +125,7 @@ public class MobsterSpawner implements Runnable {
 	{
 		for (int i=0; i<mobSize; i++){
 			MobsterMonster m = creature.spawnMonster(loc);
-			m.setHealth(m.getEntity().getMaxHealth());
+			m.setHealth(this.monsterHealth);
 			if(m.id() == 0 || m.getEntity() == null)
 				continue; // protection against bad entities
 			monsters.put(m.id(), m);
