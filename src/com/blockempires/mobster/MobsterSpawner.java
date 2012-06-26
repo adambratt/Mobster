@@ -211,7 +211,7 @@ public class MobsterSpawner implements Runnable {
 	}
 
 	public boolean setSpeed(int speed) {
-		if(speed < 1 || speed > 360)
+		if(speed < 0 || speed > 360) //Allow 0 speed
 			return false;
 		spawnSpeed = speed;
 		room.mob.db.query("update mobster_spawners set speed='"+speed+"' where name='"+name+"'");

@@ -111,7 +111,7 @@ public class MobsterListener implements Listener {
 	
 	
 	public void onEntityDamage(EntityDamageEvent event){
-		if (!dungeon.enabled || event.isCancelled()) 
+		if (!dungeon.enabled || event.isCancelled() || !(event.getEntity() instanceof LivingEntity)) 
 			return;
 		
 		EntityDamageByEntityEvent e = (event instanceof EntityDamageByEntityEvent) ? (EntityDamageByEntityEvent) event : null;
@@ -127,7 +127,7 @@ public class MobsterListener implements Listener {
 		if (damagee instanceof Player) // Also needs to check if player is in this arena
 			onPlayerDamage(event, (Player) damagee, damager);
 		// Monster
-        else if (damagee instanceof LivingEntity && dungeon.hasMonster(damagee)){
+        else if (dungeon.hasMonster(damagee)){
         	onMonsterDamage(event, (LivingEntity) damagee, damager);
         }
 		

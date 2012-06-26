@@ -40,7 +40,7 @@ public class MobsterPlugin extends JavaPlugin {
 		loadEvents();
 		
 		//Tell the console
-		info("Mobster v"+getDescription().getVersion()+" has been enabled.");
+		info("Mobster v"+getDescription().getVersion()+" has been enabled successfully.");
 	}
 
 	public void onDisable(){ 

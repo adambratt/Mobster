@@ -6,8 +6,8 @@
 	<classpathentry kind="lib" path="/Users/Adam/Development/Minecraft/Server/plugins/Vault.jar"/>
 	<classpathentry kind="lib" path="/Users/Adam/Development/Minecraft/Server/plugins/iConomy.jar"/>
 	<classpathentry kind="lib" path="/Users/Adam/Development/Minecraft/Server/plugins/worldedit-5.3-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="/Users/Adam/Development/Minecraft/Server/plugins/worldguard-5.5.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/Users/Adam/Development/Minecraft/Heroes.jar"/>
 	<classpathentry kind="lib" path="/Users/Adam/Development/Minecraft/bukkit-1.2.5-R4.0.jar"/>
+	<classpathentry kind="lib" path="/Users/Adam/Development/Minecraft/Server/plugins/WorldGuard.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
